@@ -1,6 +1,15 @@
 <?php
+/**
+ * This file is part of the Link Set package
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ *
+ * @copyright Baptiste Clavié <clavie.b@gmail.com>
+ * @license   http://www.opensource.org/licenses/MIT-License MIT License
+ */
 
-namespace Taluu\Domain\ChangeSet;
+namespace LinkSet;
 
 use \Countable,
     \ArrayAccess,
@@ -10,13 +19,16 @@ use \Countable,
     \OutOfBoundsException,
     \InvalidArgumentException;
 
+use LinkSet\Snapshot\Object,
+    LinkSet\Exception\IncomparableDataException;
+
 /**
  * Represents a changeset
  *
  * @todo allow more changesets on some other things than just ApiAble objects ?
  * @author Baptiste Clavié <baptiste@wisembly.com>
  */
-class Set implements ChangeInterface, ArrayAccess, IteratorAggregate, Countable
+class Set implements ArrayAccess, IteratorAggregate, Countable
 {
     private $changes = null;
 
@@ -31,6 +43,7 @@ class Set implements ChangeInterface, ArrayAccess, IteratorAggregate, Countable
      * @param  string $property
      *
      * @return mixed Set if it was a recursive change, Change otherwise
+     * @throws OutOfBoundsException The property doesn't exist or wasn't changed
      */
     public function getChange($property)
     {
@@ -51,16 +64,6 @@ class Set implements ChangeInterface, ArrayAccess, IteratorAggregate, Countable
     public function hasChanged($property)
     {
         return isset($this->changes[$property]);
-    }
-
-    /** {@inheritDoc} */
-    public function toArray($short = true)
-    {
-        if (true === $short) {
-            return array_keys($this->changes);
-        }
-
-        return array_map(function (ChangeInterface $change) { return $change->toArray(false); }, $this->changes);
     }
 
     /** {@inheritDoc} */
@@ -107,8 +110,7 @@ class Set implements ChangeInterface, ArrayAccess, IteratorAggregate, Countable
      * @param array $old Old array
      * @param array $new New array
      *
-     * @internal for intern use only
-     * @return array the changes brought to the object
+     * @throws InvalidArgumentException If the two arrays does not have the same keys
      */
     private function compute(array $old, array $new)
     {
@@ -125,9 +127,20 @@ class Set implements ChangeInterface, ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            // -- if it is an object (and so is new[key]), just compare the two hashes
+            // -- if it is an object, try to check the hashes and then the diff
             if (is_object($old[$key])) {
-                if (spl_object_hash($old[$key]) !== spl_object_hash($new[$key])) {
+                try {
+                    $oldSnapshot = new Object($old[$key]);
+                    $newSnapshot = new Object($new[$key]);
+
+                    $set = $oldSnapshot->diff($newSnapshot);
+
+                    if (0 === count($set)) {
+                        continue;
+                    }
+
+                    $this->changes[$key] = $set;
+                } catch (IncomparableDataException $e) {
                     $this->changes[$key] = new Change($old[$key], $new[$key]);
                 }
 
@@ -157,8 +170,5 @@ class Set implements ChangeInterface, ArrayAccess, IteratorAggregate, Countable
                 $this->changes[$key] = new Change($old[$key], $new[$key]);
             }
         }
-
-        return $this->changes;
     }
-
 }
