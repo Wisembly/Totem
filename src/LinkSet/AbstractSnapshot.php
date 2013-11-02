@@ -55,18 +55,16 @@ abstract class AbstractSnapshot
 	 */
 	final public function diff(self $snapshot)
 	{
-		if (!$this->compare($snapshot)) {
+		if (!$this->isComparable($snapshot)) {
 			throw new IncomparableDataException('this object is not comparable with the base');
 		}
 
-		$data 	  = $this->data;
-		$snapshot = $snapshot->data;
+		$data = [$this->data, $snapshot->data];
 
 		if ($snapshot->time < $this->time) {
-			$data 	  = $snapshot;
-			$snapshot = $this->data;
+			$data = [$snapshot->data, $this->data];
 		}
 
-		return new Set($data, $snapshot);
+		return new Set($data[0], $data[1]);
 	}
 }

@@ -25,8 +25,7 @@ use LinkSet\Snapshot\Object,
 /**
  * Represents a changeset
  *
- * @todo allow more changesets on some other things than just ApiAble objects ?
- * @author Baptiste Clavié <baptiste@wisembly.com>
+ * @author Baptiste Clavié <clavie.b@gmail.com>
  */
 class Set implements ArrayAccess, IteratorAggregate, Countable
 {
