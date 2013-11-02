@@ -24,47 +24,47 @@ use Linkset\Exception\IncomparableDataException;
  */
 abstract class AbstractSnapshot
 {
-	/** @var array data stored in an array */
-	protected $data = [];
+    /** @var array data stored in an array */
+    protected $data = [];
 
-	/** @var float Time when this snapshot was taken */
-	private $time;
+    /** @var float Time when this snapshot was taken */
+    private $time;
 
-	public function __construct() {
-		$this->time = microtime(true); // @todo use Datetime instead ?
-	}
+    public function __construct() {
+        $this->time = microtime(true); // @todo use Datetime instead ?
+    }
 
-	/**
-	 * Check if the two snapshots are comparable
-	 *
-	 * @param self $snapshot Snapshot to be compared with
-	 * @return boolean true if the two snapshots can be processed in a diff, false otherwise
-	 */
-	abstract public function isComparable(self $snapshot);
+    /**
+     * Check if the two snapshots are comparable
+     *
+     * @param self $snapshot Snapshot to be compared with
+     * @return boolean true if the two snapshots can be processed in a diff, false otherwise
+     */
+    abstract public function isComparable(self $snapshot);
 
-	/** Clone this object */
-	final private function __clone() {}
+    /** Clone this object */
+    final private function __clone() {}
 
-	/**
-	 * Calculate the diff between two snapshots
-	 *
-	 * @param self $snapshot Snapshot to compare this one to
-	 *
-	 * @return Set Changeset between the two snapshots
-	 * @throws IncomparableDataException If the two snapshots are not comparable
-	 */
-	final public function diff(self $snapshot)
-	{
-		if (!$this->isComparable($snapshot)) {
-			throw new IncomparableDataException('this object is not comparable with the base');
-		}
+    /**
+     * Calculate the diff between two snapshots
+     *
+     * @param self $snapshot Snapshot to compare this one to
+     *
+     * @return Set Changeset between the two snapshots
+     * @throws IncomparableDataException If the two snapshots are not comparable
+     */
+    final public function diff(self $snapshot)
+    {
+        if (!$this->isComparable($snapshot)) {
+            throw new IncomparableDataException('this object is not comparable with the base');
+        }
 
-		$data = [$this->data, $snapshot->data];
+        $data = [$this->data, $snapshot->data];
 
-		if ($snapshot->time < $this->time) {
-			$data = [$snapshot->data, $this->data];
-		}
+        if ($snapshot->time < $this->time) {
+            $data = [$snapshot->data, $this->data];
+        }
 
-		return new Set($data[0], $data[1]);
-	}
+        return new Set($data[0], $data[1]);
+    }
 }
