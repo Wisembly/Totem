@@ -17,7 +17,7 @@ namespace Totem;
  * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Change
+class Change implements ChangeInterface
 {
     private $old; // old state
     private $new; // new state
@@ -28,11 +28,13 @@ class Change
         $this->new = $new;
     }
 
+    /** {@inheritDoc} */
     public function getOld()
     {
         return $this->old;
     }
 
+    /** {@inheritDoc} */
     public function getNew()
     {
         return $this->new;

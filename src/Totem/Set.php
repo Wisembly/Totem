@@ -28,7 +28,7 @@ use Totem\Snapshot\ObjectSnapshot,
  * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Set implements ArrayAccess, Countable
+class Set implements ArrayAccess, Countable, ChangeInterface
 {
     private $old;
     private $new;
@@ -48,7 +48,7 @@ class Set implements ArrayAccess, Countable
      *
      * @param  string $property
      *
-     * @return mixed Set if it was a recursive change, Change otherwise
+     * @return ChangeInterface Set if it was a recursive change, Change otherwise
      * @throws OutOfBoundsException The property doesn't exist or wasn't changed
      */
     public function getChange($property)
