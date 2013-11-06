@@ -13,13 +13,13 @@ namespace LinkSet;
 
 use \InvalidArgumentException;
 
-use Linkset\Exception\IncomparableDataException;
+use LinkSet\Exception\IncomparableDataException;
 
 /**
  * Base class for a Snapshot
- * 
+ *
  * Represent the data fixed at a given time
- * 
+ *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
 abstract class AbstractSnapshot

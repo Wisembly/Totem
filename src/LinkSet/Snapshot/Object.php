@@ -52,7 +52,7 @@ class Object extends AbstractSnapshot
     }
 
     /** {@inheritDoc} */
-    public function isComparable(self $snapshot)
+    public function isComparable(AbstractSnapshot $snapshot)
     {
         if (!$snapshot instanceof static) {
             return false;

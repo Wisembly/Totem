@@ -9,7 +9,7 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace LinkSet;
+namespace LinkSet\Exception;
 
 use \InvalidArgumentException;
 

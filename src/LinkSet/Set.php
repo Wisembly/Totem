@@ -27,12 +27,18 @@ use LinkSet\Snapshot\Object,
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Set implements ArrayAccess, IteratorAggregate, Countable
+class Set implements ArrayAccess, Countable
 {
+    private $old;
+    private $new;
+
     private $changes = null;
 
     public function __construct(array $old, array $new)
     {
+        $this->old = $old;
+        $this->new = $new;
+
         $this->compute($old, $new);
     }
 
@@ -66,12 +72,6 @@ class Set implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /** {@inheritDoc} */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->changes);
-    }
-
-    /** {@inheritDoc} */
     public function offsetExists($offset)
     {
         return $this->hasChanged($offset);
@@ -99,6 +99,18 @@ class Set implements ArrayAccess, IteratorAggregate, Countable
     public function count()
     {
         return count($this->changes);
+    }
+
+    /** Gets the snapshot the new one is compared to */
+    public function getOld()
+    {
+        return $this->old;
+    }
+
+    /** Gets the last snapshot */
+    public function getNew()
+    {
+        return $this->new;
     }
 
     /**
