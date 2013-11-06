@@ -19,7 +19,7 @@ the archive release.
 
 ### Development version
 1. Install Git
-2. `git clone git://github.com/Taluu/Link-TPL.git`
+2. `git clone git://github.com/Taluu/LinkSet.git`
 
 ### Via Composer
 1. Install composer in your project: `curl -s http://getcomposer.org/installer | php`
