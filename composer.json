@@ -4,6 +4,22 @@
     "description": "Changeset calculator between data",
     "keywords": ["changeset"],
 
+    "authors": [
+        {
+            "name": "Baptiste Clavié",
+            "email": "clavie.b@gmail.com",
+            "homepage": "http://baptiste.clavié.net",
+            "role": "Lead Developper"
+        }
+    ],
+
+    "support": {
+        "email": "clavie.b@gmail.com",
+        "issues": "https://github.com/Taluu/LinkSet/issues",
+        "source": "https://github.com/Taluu/LinkSet",
+        "forum": "http://www.talus-works.net"
+    },
+
     "autoload": {
         "psr-0": {
             "LinkSet": "src/"
