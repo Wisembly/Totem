@@ -10,7 +10,12 @@ Snapshots currently supported :
 Installation
 ============
 You have multiple ways to install LinkSet. If you are unsure what to do, go with
-the development release (as there is currently no tagged releases).
+the archive release.
+
+### Archive Release
+1. Download the most recent release from the [release page](https://github.com/Taluu/LinkSet/releases)
+2. Unpack the archive
+3. Move the files somewhere in your project
 
 ### Development version
 1. Install Git
