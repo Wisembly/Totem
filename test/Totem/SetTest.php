@@ -1,10 +1,19 @@
 <?php
+/**
+ * This file is part of the Totem package
+ *
+ * For the full copyright and license information, please view the LICENSE file
+ * that was distributed with this source code.
+ *
+ * @copyright Baptiste Clavié <clavie.b@gmail.com>
+ * @license   http://www.opensource.org/licenses/MIT-License MIT License
+ */
 
-namespace test\LinkSet;
+namespace test\Totem;
 
 use \PHPUnit_Framework_TestCase;
 
-use LinkSet\Set;
+use Totem\Set;
 
 class ChangeSetTest extends \PHPUnit_Framework_TestCase
 {
@@ -60,8 +69,8 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
 
         $set = new Set($old, $new);
 
-        $this->assertInstanceOf('LinkSet\\Change', $set->getChange('foo'));
-        $this->assertInstanceOf('LinkSet\\Set', $set->getChange('bar'));
+        $this->assertInstanceOf('Totem\\Change', $set->getChange('foo'));
+        $this->assertInstanceOf('Totem\\Set', $set->getChange('bar'));
     }
 }
 

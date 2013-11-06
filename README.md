@@ -1,6 +1,6 @@
-LinkSet
-=======
-Changeset calculator between two data. The name is temporary, looking for a better name !
+Totem
+=====
+Changeset calculator between two data.
 
 Compatible PHP >= 5.4
 
@@ -9,17 +9,17 @@ Snapshots currently supported :
 
 Installation
 ============
-You have multiple ways to install LinkSet. If you are unsure what to do, go with
+You have multiple ways to install Totem. If you are unsure what to do, go with
 the archive release.
 
 ### Archive Release
-1. Download the most recent release from the [release page](https://github.com/Taluu/LinkSet/releases)
+1. Download the most recent release from the [release page](https://github.com/Taluu/Totem/releases)
 2. Unpack the archive
 3. Move the files somewhere in your project
 
 ### Development version
 1. Install Git
-2. `git clone git://github.com/Taluu/LinkSet.git`
+2. `git clone git://github.com/Taluu/Totem.git`
 
 ### Via Composer
 1. Install composer in your project: `curl -s http://getcomposer.org/installer | php`
@@ -29,7 +29,7 @@ the archive release.
 
       {
         "require": {
-          "taluu/link-set": "dev-master"
+          "taluu/totem": "~1.0.0"
         }
       }
     ```
@@ -42,11 +42,11 @@ Basic Usage
 <?php
 
 use \stdclass; // random object
-use LinkSet\Snapshot\Object;
+use Totem\Snapshot\Object;
 
 $object = new stdclass;
 
-$snapsht = new Object($object); // LinkSet\Snapshot\Object
-$set = $snapshot->diff($snapshot); // LinkSet\Set
+$snapshot = new Object($object); // Totem\Snapshot\Object
+$set = $snapshot->diff($snapshot); // Totem\Set
 ```
 

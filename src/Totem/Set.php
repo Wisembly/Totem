@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the Link Set package
+ * This file is part of the Totem package
  *
  * For the full copyright and license information, please view the LICENSE file
  * that was distributed with this source code.
@@ -9,7 +9,7 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace LinkSet;
+namespace Totem;
 
 use \Countable,
     \ArrayAccess,
@@ -19,12 +19,13 @@ use \Countable,
     \OutOfBoundsException,
     \InvalidArgumentException;
 
-use LinkSet\Snapshot\Object,
-    LinkSet\Exception\IncomparableDataException;
+use Totem\Snapshot\Object,
+    Totem\Exception\IncomparableDataException;
 
 /**
  * Represents a changeset
  *
+ * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
 class Set implements ArrayAccess, Countable
