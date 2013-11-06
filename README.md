@@ -6,11 +6,12 @@ Compatible PHP >= 5.4
 
 Snapshots currently supported :
 - Object
+- Array
 
 Installation
 ============
 You have multiple ways to install Totem. If you are unsure what to do, go with
-the archive release.
+[the archive release](#archive-release).
 
 ### Archive Release
 1. Download the most recent release from the [release page](https://github.com/Taluu/Totem/releases)
@@ -42,11 +43,11 @@ Basic Usage
 <?php
 
 use \stdclass; // random object
-use Totem\Snapshot\Object;
+use Totem\Snapshot\ObjectSnapshot;
 
 $object = new stdclass;
 
-$snapshot = new Object($object); // Totem\Snapshot\Object
+$snapshot = new ObjectSnapshot($object); // Totem\Snapshot\ObjectSnapshot
 $set = $snapshot->diff($snapshot); // Totem\Set
 ```
 
