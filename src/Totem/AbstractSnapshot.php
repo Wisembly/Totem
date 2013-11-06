@@ -53,7 +53,7 @@ abstract class AbstractSnapshot
      * @return Set Changeset between the two snapshots
      * @throws IncomparableDataException If the two snapshots are not comparable
      */
-    final public function diff(self $snapshot)
+    public function diff(self $snapshot)
     {
         if (!$this->isComparable($snapshot)) {
             throw new IncomparableDataException('this object is not comparable with the base');

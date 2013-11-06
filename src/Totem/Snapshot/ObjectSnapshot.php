@@ -23,10 +23,10 @@ use Totem\AbstractSnapshot;
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Object extends AbstractSnapshot
+class ObjectSnapshot extends AbstractSnapshot
 {
     /** @var string object's hash */
-    private $oid;
+    protected $oid;
 
     /**
      * Build this snapshot

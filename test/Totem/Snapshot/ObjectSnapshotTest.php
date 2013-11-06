@@ -15,24 +15,24 @@ use \stdClass;
 
 use \PHPUnit_Framework_TestCase;
 
-use Totem\Snapshot\Object;
+use Totem\Snapshot\ObjectSnapshot;
 
-class ObjectTest extends PHPUnit_Framework_TestCase
+class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException Totem\Exception\IncomparableDataException
      */
     public function testDiffWrongOid()
     {
-        $snapshot = new Object(new stdClass);
-        $snapshot->diff(new Object(new stdClass));
+        $snapshot = new ObjectSnapshot(new stdClass);
+        $snapshot->diff(new ObjectSnapshot(new stdClass));
     }
 
     public function testDiff()
     {
         $object = new stdClass;
 
-        $snapshot = new Object($object);
+        $snapshot = new ObjectSnapshot($object);
         $set = $snapshot->diff($snapshot);
 
         $this->assertInstanceOf('Totem\\Set', $set);

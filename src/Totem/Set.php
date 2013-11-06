@@ -19,7 +19,7 @@ use \Countable,
     \OutOfBoundsException,
     \InvalidArgumentException;
 
-use Totem\Snapshot\Object,
+use Totem\Snapshot\ObjectSnapshot,
     Totem\Exception\IncomparableDataException;
 
 /**
@@ -122,9 +122,10 @@ class Set implements ArrayAccess, Countable
      * @param array $old Old array
      * @param array $new New array
      *
+     * @internal
      * @throws InvalidArgumentException If the two arrays does not have the same keys
      */
-    private function compute(array $old, array $new)
+    protected function compute(array $old, array $new)
     {
         if (array_keys($old) !== array_keys($new)) {
             throw new \InvalidArgumentException('You should compare two arrays with the same keys !');
@@ -142,8 +143,8 @@ class Set implements ArrayAccess, Countable
             // -- if it is an object, try to check the hashes and then the diff
             if (is_object($old[$key])) {
                 try {
-                    $oldSnapshot = new Object($old[$key]);
-                    $newSnapshot = new Object($new[$key]);
+                    $oldSnapshot = new ObjectSnapshot($old[$key]);
+                    $newSnapshot = new ObjectSnapshot($new[$key]);
 
                     $set = $oldSnapshot->diff($newSnapshot);
 
@@ -168,7 +169,7 @@ class Set implements ArrayAccess, Countable
                 }
 
                 // -- same size / same keys ; return only what has changed
-                $set = new self($old[$key], $new[$key]);
+                $set = new static($old[$key], $new[$key]);
 
                 if (0 !== count($set)) {
                     $this->changes[$key] = $set;
