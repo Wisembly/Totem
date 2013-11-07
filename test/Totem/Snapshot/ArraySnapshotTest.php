@@ -35,5 +35,22 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Totem\\Set', $set);
     }
+
+    /**
+     * @dataProvider providerCompare
+     */
+    public function testCompare($compare, $expect)
+    {
+        $snapshot = new ArraySnapshot([]);
+
+        $this->assertSame($expect, $snapshot->isComparable($compare));
+    }
+
+    public function providerCompare()
+    {
+        return [[new ArraySnapshot([]), true],
+                [new ArraySnapshot(['foo']), false],
+                [$this->getMock('Totem\\AbstractSnapshot'), false]];
+    }
 }
 

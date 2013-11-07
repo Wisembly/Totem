@@ -45,10 +45,8 @@ class ObjectSnapshot extends AbstractSnapshot
 
         foreach ($refl->getProperties() as $reflProperty) {
             $reflProperty->setAccessible(true);
-            $this->data[$reflProperty->getName()] = $reflProperty->getValue();
+            $this->data[$reflProperty->getName()] = $reflProperty->getValue($object);
         }
-
-        parent::__construct();
     }
 
     /** {@inheritDoc} */

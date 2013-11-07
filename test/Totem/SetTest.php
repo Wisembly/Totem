@@ -11,9 +11,12 @@
 
 namespace test\Totem;
 
+use \stdClass;
+
 use \PHPUnit_Framework_TestCase;
 
-use Totem\Set;
+use Totem\Set,
+    Totem\Snapshot\ObjectSnapshot;
 
 class ChangeSetTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +47,9 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
         $set = new Set($old, $new);
 
         $this->assertTrue($set->hasChanged('foo'));
+        $this->assertTrue(isset($set['foo']));
         $this->assertFalse($set->hasChanged('baz'));
+        $this->assertFalse(isset($set['baz']));
     }
 
     /**
@@ -59,18 +64,59 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
         $set->getChange('foo');
     }
 
+    // @todo to break up
     public function testGetChange()
     {
-        $old = $new = ['foo' => 'foo',
-                       'bar' => ['foo', 'bar']];
+        $old = $new = ['foo'   => 'foo',
+                       'bar'   => ['foo', 'bar'],
+                       'baz'   => new stdClass,
+                       'qux'   => 'foo',
+                       'fubar' => (object) ['foo' => 'bar'],
+                       'fubaz' => ['foo', 'bar']];
 
-        $new['foo'] = 'bar';
-        $new['bar'] = ['foo', 'baz'];
+        $new['foo']     = 'bar';
+        $new['bar']     = ['foo', 'baz'];
+        $new['baz']     = clone $old['fubar'];
+        $new['qux']     = 42;
+        $new['fubaz'][] = 'baz';
 
         $set = new Set($old, $new);
 
         $this->assertInstanceOf('Totem\\Change', $set->getChange('foo'));
         $this->assertInstanceOf('Totem\\Set', $set->getChange('bar'));
+        $this->assertInstanceOf('Totem\\Change', $set['foo']);
     }
+
+    public function testGetters()
+    {
+        $old = ['foo', 'bar'];
+        $set = new Set($old, $old);
+
+        $this->assertSame($old, $set->getOld());
+        $this->assertSame($old, $set->getNew());
+    }
+
+    /**
+     * @expectedException BadMethodCallException
+     */
+    public function testForbidenSetter()
+    {
+        $old = ['foo'];
+        $set = new Set($old, $old);
+
+        $set[] = 'baz';
+    }
+
+    /**
+     * @expectedException BadMethodCallException
+     */
+    public function testForbidenUnsetter()
+    {
+        $old = ['foo'];
+        $set = new Set($old, $old);
+
+        unset($set[0]);
+    }
+
 }
 

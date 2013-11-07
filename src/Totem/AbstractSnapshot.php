@@ -27,13 +27,6 @@ abstract class AbstractSnapshot
     /** @var array data stored in an array */
     protected $data = [];
 
-    /** @var float Time when this snapshot was taken */
-    private $time;
-
-    public function __construct() {
-        $this->time = microtime(true); // @todo use Datetime instead ?
-    }
-
     /**
      * Check if the two snapshots are comparable
      *
@@ -42,7 +35,11 @@ abstract class AbstractSnapshot
      */
     abstract public function isComparable(self $snapshot);
 
-    /** Clone this object */
+    /**
+     * Clone this object
+     *
+     * @codeCoverageIgnore
+     */
     final private function __clone() {}
 
     /**
@@ -59,12 +56,7 @@ abstract class AbstractSnapshot
             throw new IncomparableDataException('this object is not comparable with the base');
         }
 
-        $data = [$this->data, $snapshot->data];
-
-        if ($snapshot->time < $this->time) {
-            $data = [$snapshot->data, $this->data];
-        }
-
-        return new Set($data[0], $data[1]);
+        return new Set($this->data, $snapshot->data);
     }
 }
+

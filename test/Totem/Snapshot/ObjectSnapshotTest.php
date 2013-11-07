@@ -37,5 +37,32 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Totem\\Set', $set);
     }
+
+    /**
+     * @dataProvider providerCompare
+     */
+    public function testCompare($object, $compare, $expect)
+    {
+        $snapshot = new ObjectSnapshot($object);
+
+        $this->assertSame($expect, $snapshot->isComparable($compare));
+    }
+
+    public function providerCompare()
+    {
+        $object = new stdClass;
+
+        return [[$object, new ObjectSnapshot($object), true],
+                [$object, new ObjectSnapshot(clone $object), false],
+                [$object, $this->getMock('Totem\\AbstractSnapshot'), false]];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testConstructWithoutObject()
+    {
+        new ObjectSnapshot([]);
+    }
 }
 

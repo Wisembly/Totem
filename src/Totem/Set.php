@@ -17,6 +17,7 @@ use \Countable,
     \IteratorAggregate,
 
     \OutOfBoundsException,
+    \BadMethodCallException,
     \InvalidArgumentException;
 
 use Totem\Snapshot\ObjectSnapshot,
@@ -142,19 +143,11 @@ class Set implements ArrayAccess, Countable, ChangeInterface
 
             // -- if it is an object, try to check the hashes and then the diff
             if (is_object($old[$key])) {
-                try {
-                    $oldSnapshot = new ObjectSnapshot($old[$key]);
-                    $newSnapshot = new ObjectSnapshot($new[$key]);
+                $oldSnapshot = new ObjectSnapshot($old[$key]);
 
-                    $set = $oldSnapshot->diff($newSnapshot);
-
-                    if (0 === count($set)) {
-                        continue;
-                    }
-
+                // @todo Check how to check the differences into this object if it is the same object
+                if (!$oldSnapshot->isComparable(new ObjectSnapshot($new[$key]))) {
                     $this->changes[$key] = $set;
-                } catch (IncomparableDataException $e) {
-                    $this->changes[$key] = new Change($old[$key], $new[$key]);
                 }
 
                 continue;
