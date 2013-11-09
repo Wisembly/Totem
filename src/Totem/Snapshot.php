@@ -143,7 +143,7 @@ class Snapshot implements ArrayAccess, IteratorAggregate
      */
     final public function getIterator()
     {
-        return new ArrayIterator($this->getComparableData());
+        return new ArrayIterator(array_keys($this->data));
     }
 }
 
