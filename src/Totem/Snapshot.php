@@ -11,7 +11,11 @@
 
 namespace Totem;
 
-use \InvalidArgumentException;
+use \ArrayAccess,
+    \IteratorAggregate,
+
+    \BadMethodCallException,
+    \InvalidArgumentException;
 
 use Totem\Exception\IncomparableDataException;
 
@@ -22,7 +26,7 @@ use Totem\Exception\IncomparableDataException;
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Snapshot
+class Snapshot implements ArrayAccess, IteratorAggregate
 {
     /** @var array data stored in an array */
     protected $data = [];
@@ -72,7 +76,7 @@ class Snapshot
             throw new IncomparableDataException('this data is not comparable with the base');
         }
 
-        return new Set($this->data, $snapshot->data);
+        return new Set($this->getComparableData(), $snapshot->getComparableData());
     }
 
     /**
@@ -98,6 +102,48 @@ class Snapshot
     final public function getRawData()
     {
         return $this->raw;
+    }
+
+    /** {@inheritDoc} */
+    final public function offsetExists($offset)
+    {
+        return isset($this->getComparableData()[$offset]);
+    }
+
+    /** {@inheritDoc} */
+    final public function offsetGet($offset)
+    {
+        return $this->getComparableData()[$offset];
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws BadMethodCallException if a unset is tried on a snapshot property
+     */
+    final public function offsetSet($offset, $value)
+    {
+        throw new BadMethodCallException('A snapshot is frozen by nature');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws BadMethodCallException if a unset is tried on a snapshot property
+     */
+    final public function offsetUnset($offset)
+    {
+        throw new BadMethodCallException('A snapshot is frozen by nature');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InvalidArgumentException if the frozen data is not an array
+     */
+    final public function getIterator()
+    {
+        return new ArrayIterator($this->getComparableData());
     }
 }
 
