@@ -146,7 +146,7 @@ class Set implements ArrayAccess, Countable, ChangeInterface
                 $oldSnapshot = new ObjectSnapshot($old[$key]);
 
                 // @todo Check how to check the differences into this object if it is the same object
-                if (!$oldSnapshot->isComparable(new ObjectSnapshot($new[$key]))) {
+                if (spl_object_hash($old[$key]) !== spl_object_hash($new[$key])) {
                     $this->changes[$key] = $set;
                 }
 

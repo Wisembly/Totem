@@ -11,7 +11,8 @@
 
 namespace test\Totem\Snapshot;
 
-use \stdClass;
+use \stdClass,
+    \ReflectionMethod;
 
 use \PHPUnit_Framework_TestCase;
 
@@ -45,16 +46,23 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
     {
         $snapshot = new ObjectSnapshot($object);
 
-        $this->assertSame($expect, $snapshot->isComparable($compare));
+        $refl = new ReflectionMethod('Totem\\Snapshot\\ObjectSnapshot', 'isComparable');
+        $refl->setAccessible(true);
+
+        $this->assertSame($expect, $refl->invoke($snapshot, $compare));
     }
 
     public function providerCompare()
     {
         $object = new stdClass;
 
+        $snapshot = $this->getMockBuilder('Totem\\Snapshot')
+                         ->disableOriginalConstructor()
+                         ->getMock();
+
         return [[$object, new ObjectSnapshot($object), true],
                 [$object, new ObjectSnapshot(clone $object), false],
-                [$object, $this->getMock('Totem\\AbstractSnapshot'), false]];
+                [$object, $snapshot, false]];
     }
 
     /**

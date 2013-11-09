@@ -22,10 +22,19 @@ use Totem\Exception\IncomparableDataException;
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-abstract class AbstractSnapshot
+class Snapshot
 {
     /** @var array data stored in an array */
     protected $data = [];
+
+    /** @var mixed raw data stored */
+    protected $raw;
+
+    public function __construct($raw)
+    {
+        $this->raw  = $raw;
+        $this->data = (array) $raw;
+    }
 
     /**
      * Check if the two snapshots are comparable
@@ -33,7 +42,14 @@ abstract class AbstractSnapshot
      * @param self $snapshot Snapshot to be compared with
      * @return boolean true if the two snapshots can be processed in a diff, false otherwise
      */
-    abstract public function isComparable(self $snapshot);
+    protected function isComparable(self $snapshot)
+    {
+        if (!$snapshot instanceof static) {
+            return false;
+        }
+
+        return gettype($snapshot->raw) === gettype($this->raw);
+    }
 
     /**
      * Clone this object
@@ -53,10 +69,35 @@ abstract class AbstractSnapshot
     public function diff(self $snapshot)
     {
         if (!$this->isComparable($snapshot)) {
-            throw new IncomparableDataException('this object is not comparable with the base');
+            throw new IncomparableDataException('this data is not comparable with the base');
         }
 
         return new Set($this->data, $snapshot->data);
+    }
+
+    /**
+     * Get the computed data, transformed into an array by this constructor
+     *
+     * @return array comparable data
+     * @throws InvalidArgumentException If the data is not an array
+     */
+    final public function getComparableData()
+    {
+        if (!is_array($this->data)) {
+            throw new InvalidArgumentException('The computed data is not an array, "' . gettype($this->data) . '" given');
+        }
+
+        return $this->data;
+    }
+
+    /**
+     * Get the raw data fed to this snapshot
+     *
+     * @return mixed
+     */
+    final public function getRawData()
+    {
+        return $this->raw;
     }
 }
 

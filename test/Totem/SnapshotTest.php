@@ -16,22 +16,23 @@ use \stdClass,
 
 use \PHPUnit_Framework_TestCase;
 
-use Totem\Snapshot\AbstractSnapshot;
+use Totem\Snapshot\Snapshot;
 
-class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
+class SnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException Totem\Exception\IncomparableDataException
      */
     public function testDiffIncomparable()
     {
-        $snapshot = $this->getMockBuilder('Totem\\AbstractSnapshot')
+        $snapshot = $this->getMockBuilder('Totem\\Snapshot')
                          ->setMethods(['isComparable'])
+                         ->disableOriginalConstructor()
                          ->getMock();
 
         $snapshot->expects(self::once())
                  ->method('isComparable')
-                 ->with(self::isInstanceOf('Totem\\AbstractSnapshot'))
+                 ->with(self::isInstanceOf('Totem\\Snapshot'))
                  ->will(self::returnValue(false));
 
         $snapshot->diff($snapshot);
