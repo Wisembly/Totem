@@ -12,6 +12,7 @@
 namespace Totem;
 
 use \ArrayAccess,
+    \ArrayIterator,
     \IteratorAggregate,
 
     \BadMethodCallException,
@@ -36,8 +37,7 @@ class Snapshot implements ArrayAccess, IteratorAggregate
 
     public function __construct($raw)
     {
-        $this->raw  = $raw;
-        $this->data = (array) $raw;
+        $this->raw = $raw;
     }
 
     /**
@@ -76,13 +76,13 @@ class Snapshot implements ArrayAccess, IteratorAggregate
             throw new IncomparableDataException('this data is not comparable with the base');
         }
 
-        return new Set($this->getComparableData(), $snapshot->getComparableData());
+        return new Set($this, $snapshot);
     }
 
     /**
      * Get the computed data, transformed into an array by this constructor
      *
-     * @return array comparable data
+     * @return SnapshotInterface[]
      * @throws InvalidArgumentException If the data is not an array
      */
     final public function getComparableData()

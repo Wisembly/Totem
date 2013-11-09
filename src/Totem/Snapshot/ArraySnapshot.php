@@ -29,6 +29,22 @@ class ArraySnapshot extends Snapshot
     {
         parent::__construct($data);
 
+        foreach ($data as &$value) {
+            switch (gettype($value)) {
+                case 'object':
+                    $value = new ObjectSnapshot($value);
+                    break;
+
+                case 'array':
+                    $value = new static($value);
+                    break;
+
+                default:
+                    $value = new Snapshot($value);
+                    break;
+            }
+        }
+
         $this->data = $data;
     }
 

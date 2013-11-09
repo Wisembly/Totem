@@ -16,9 +16,11 @@ use \stdClass;
 use \PHPUnit_Framework_TestCase;
 
 use Totem\Set,
+    Totem\Snapshot as Base,
+    Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot;
 
-class ChangeSetTest extends \PHPUnit_Framework_TestCase
+class SetTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException InvalidArgumentException
@@ -26,7 +28,7 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetChangesWithInvalidEntity($old, $new)
     {
-        new Set($old, $new);
+        new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
     }
 
     public function invalidEntryProvider()
@@ -39,17 +41,15 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
 
     public function testHasChanged()
     {
-        $old = $new = ['foo' => 'bar',
-                       'baz' => 'fubar'];
-
-        $new['foo'] = 'fubaz';
+        $old = new Snapshot(['data' => ['foo' => new Snapshot(['raw' => 'bar']), 'baz' => new Snapshot(['raw' => 'fubar'])]]);
+        $new = new Snapshot(['data' => ['foo' => new Snapshot(['raw' => 'bar']), 'baz' => new Snapshot(['raw' => 'fubaz'])]]);
 
         $set = new Set($old, $new);
 
-        $this->assertTrue($set->hasChanged('foo'));
-        $this->assertTrue(isset($set['foo']));
-        $this->assertFalse($set->hasChanged('baz'));
-        $this->assertFalse(isset($set['baz']));
+        $this->assertFalse($set->hasChanged('foo'));
+        $this->assertFalse(isset($set['foo']));
+        $this->assertTrue($set->hasChanged('baz'));
+        $this->assertTrue(isset($set['baz']));
     }
 
     /**
@@ -57,8 +57,7 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetChangeWithInvalidProperty()
     {
-        $old = ['foo' => 'bar',
-                'baz' => 'fubar'];
+        $old = new Snapshot(['data' => ['foo' => new Snapshot(['raw' => 'bar'])]]);
 
         $set = new Set($old, $old);
         $set->getChange('foo');
@@ -67,33 +66,40 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
     // @todo to break up
     public function testGetChange()
     {
-        $old = $new = ['foo'   => 'foo',
-                       'bar'   => ['foo', 'bar'],
-                       'baz'   => new stdClass,
-                       'qux'   => 'foo',
-                       'fubar' => (object) ['foo' => 'bar'],
-                       'fubaz' => ['foo', 'bar']];
+        $o = [new stdClass, (object) ['foo' => 'bar']];
 
-        $new['foo']     = 'bar';
-        $new['bar']     = ['foo', 'baz'];
-        $new['baz']     = clone $old['fubar'];
-        $new['qux']     = 42;
-        $new['fubaz'][] = 'baz';
+        $old = $new = ['foo'   => new Snapshot(['raw' => 'foo']),
+                       'bar'   => new ArraySnapshot(['foo', 'bar']),
+                       'baz'   => new ObjectSnapshot($o[0]),
+                       'qux'   => new Snapshot(['raw' => 'foo']),
+                       'fubar' => new ObjectSnapshot($o[1]),
+                       'fubaz' => new ArraySnapshot(['foo', 'bar'])];
 
-        $set = new Set($old, $new);
+        $o[1]->foo = 'baz';
+
+        $new['foo']   = new Snapshot(['raw' => 'bar']);
+        $new['bar']   = new ArraySnapshot(['foo', 'baz']);
+        $new['baz']   = new ObjectSnapshot($o[0]);
+        $new['qux']   = new Snapshot(['raw' => 42]);
+        $new['fubar'] = new ObjectSnapshot($o[1]);
+        $new['fubaz'] = new ArraySnapshot(['foo', 'bar', 'baz']);
+
+        $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
         $this->assertInstanceOf('Totem\\Change', $set->getChange('foo'));
         $this->assertInstanceOf('Totem\\Set', $set->getChange('bar'));
         $this->assertInstanceOf('Totem\\Change', $set['foo']);
+        $this->assertInstanceOf('Totem\\Set', $set->getChange('fubar'));
+        $this->assertInstanceOf('Totem\\Change', $set->getChange('fubar')->getChange('foo'));
     }
 
     public function testGetters()
     {
-        $old = ['foo', 'bar'];
+        $old = new Snapshot(['data' => [new Snapshot(['raw' => 'foo'])], 'raw' => 'foo']);
         $set = new Set($old, $old);
 
-        $this->assertSame($old, $set->getOld());
-        $this->assertSame($old, $set->getNew());
+        $this->assertSame('foo', $set->getOld());
+        $this->assertSame('foo', $set->getNew());
     }
 
     /**
@@ -101,7 +107,7 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testForbidenSetter()
     {
-        $old = ['foo'];
+        $old = new Snapshot;
         $set = new Set($old, $old);
 
         $set[] = 'baz';
@@ -112,11 +118,25 @@ class ChangeSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testForbidenUnsetter()
     {
-        $old = ['foo'];
+        $old = new Snapshot;
         $set = new Set($old, $old);
 
         unset($set[0]);
     }
 
+}
+
+class Snapshot extends Base
+{
+    public function __construct(array $args = []) {
+        $this->raw = isset($args['raw']) ? $args['raw'] : null;
+        $this->data = isset($args['data']) ? (array) $args['data'] : [];
+        $this->comparable = isset($args['comparable']) ? true === $args['comparable'] : null;
+    }
+
+    public function isComparable(Base $s)
+    {
+        return null === $this->comparable ? parent::isComparable($s) : $this->comparable;
+    }
 }
 

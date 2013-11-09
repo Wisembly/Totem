@@ -54,6 +54,20 @@ class ObjectSnapshot extends Snapshot
             $reflProperty->setAccessible(true);
             $value = $reflProperty->getValue($object);
 
+            switch (gettype($value)) {
+                case 'object':
+                    $value = new static($value);
+                    break;
+
+                case 'array':
+                    $value = new ArraySnapshot($value);
+                    break;
+
+                default:
+                    $value = new Snapshot($value);
+                    break;
+            }
+
             $this->data[$reflProperty->getName()] = $value;
         }
     }

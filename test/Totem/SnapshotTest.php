@@ -16,9 +16,9 @@ use \stdClass,
 
 use \PHPUnit_Framework_TestCase;
 
-use Totem\Snapshot\Snapshot;
+use Totem\AbstractSnapshot;
 
-class SnapshotTest extends PHPUnit_Framework_TestCase
+class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException Totem\Exception\IncomparableDataException
