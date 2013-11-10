@@ -10,7 +10,8 @@ Snapshots currently supported :
 
 Documentation
 =============
-For any pieces of document, please look for the docs/ directory.
+For any pieces of document, please look for the docs/ directory. You may also 
+check up [the compiled version](http://totem.readthedocs.org/en/latest/index.html)
 
 Installation
 ============
