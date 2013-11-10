@@ -152,16 +152,6 @@ class Set implements ArrayAccess, Countable, ChangeInterface
                 case $this->old[$key] instanceof ArraySnapshot:
                 case $this->old[$key] instanceof ObjectSnapshot:
                     try {
-                        if ($this->old[$key] instanceof ObjectSnapshot) {
-                            $method = new \ReflectionMethod('Totem\\Snapshot\\ObjectSnapshot', 'isComparable');
-                            $method->setAccessible(true);
-
-                            $property = new \ReflectionProperty('Totem\\Snapshot\\ObjectSnapshot', 'oid');
-                            $property->setAccessible(true);
-
-                            //var_dump([$key, $method->invoke($this->old[$key], $this->new[$key]), $property->getValue($this->old[$key]), $property->getValue($this->new[$key])]);
-                        }
-
                         $set = $this->old[$key]->diff($this->new[$key]);
 
                         if (0 < count($set)) {

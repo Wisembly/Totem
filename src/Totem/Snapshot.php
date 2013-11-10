@@ -73,7 +73,7 @@ class Snapshot implements ArrayAccess, IteratorAggregate
     public function diff(self $snapshot)
     {
         if (!$this->isComparable($snapshot)) {
-            throw new IncomparableDataException('this data is not comparable with the base');
+            throw new IncomparableDataException;
         }
 
         return new Set($this, $snapshot);

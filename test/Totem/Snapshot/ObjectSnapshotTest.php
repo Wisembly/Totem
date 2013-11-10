@@ -21,25 +21,6 @@ use Totem\Snapshot\ObjectSnapshot;
 class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException Totem\Exception\IncomparableDataException
-     */
-    public function testDiffWrongOid()
-    {
-        $snapshot = new ObjectSnapshot(new stdClass);
-        $snapshot->diff(new ObjectSnapshot(new stdClass));
-    }
-
-    public function testDiff()
-    {
-        $object = new stdClass;
-
-        $snapshot = new ObjectSnapshot($object);
-        $set = $snapshot->diff($snapshot);
-
-        $this->assertInstanceOf('Totem\\Set', $set);
-    }
-
-    /**
      * @dataProvider providerCompare
      */
     public function testCompare($object, $compare, $expect)
@@ -71,6 +52,21 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
     public function testConstructWithoutObject()
     {
         new ObjectSnapshot([]);
+    }
+
+    /**
+     * @dataProvider deepProvider
+     */
+    public function testDeepConstructor($value)
+    {
+        new ObjectSnapshot((object) ['foo' => $value]);
+    }
+
+    public function deepProvider()
+    {
+        return [[(object) ['bar' => 'baz']],
+                [['bar' => 'baz']],
+                ['fubar']];
     }
 }
 

@@ -16,7 +16,6 @@ use \stdClass;
 use \PHPUnit_Framework_TestCase;
 
 use Totem\Set,
-    Totem\Snapshot as Base,
     Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot;
 
@@ -73,7 +72,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
                        'baz'   => new ObjectSnapshot($o[0]),
                        'qux'   => new Snapshot(['raw' => 'foo']),
                        'fubar' => new ObjectSnapshot($o[1]),
-                       'fubaz' => new ArraySnapshot(['foo', 'bar'])];
+                       'fubaz' => new ArraySnapshot(['foo', 'bar']),
+                       'fuqux' => new ArraySnapshot(['foo'])];
 
         $o[1]->foo = 'baz';
 
@@ -83,9 +83,11 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $new['qux']   = new Snapshot(['raw' => 42]);
         $new['fubar'] = new ObjectSnapshot($o[1]);
         $new['fubaz'] = new ArraySnapshot(['foo', 'bar', 'baz']);
+        $new['fuqux'] = new ObjectSnapshot((object) []);
 
         $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
+        $this->assertInstanceOf('Totem\\Change', $set->getChange('fuqux'));
         $this->assertInstanceOf('Totem\\Change', $set->getChange('foo'));
         $this->assertInstanceOf('Totem\\Set', $set->getChange('bar'));
         $this->assertInstanceOf('Totem\\Change', $set['foo']);
@@ -124,19 +126,5 @@ class SetTest extends \PHPUnit_Framework_TestCase
         unset($set[0]);
     }
 
-}
-
-class Snapshot extends Base
-{
-    public function __construct(array $args = []) {
-        $this->raw = isset($args['raw']) ? $args['raw'] : null;
-        $this->data = isset($args['data']) ? (array) $args['data'] : [];
-        $this->comparable = isset($args['comparable']) ? true === $args['comparable'] : null;
-    }
-
-    public function isComparable(Base $s)
-    {
-        return null === $this->comparable ? parent::isComparable($s) : $this->comparable;
-    }
 }
 
