@@ -2,6 +2,5 @@ vendor
 composer.lock
 bin
 docs/build
-docs/conf.py
 docs/Makefile
 
