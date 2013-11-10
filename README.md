@@ -1,12 +1,16 @@
 Totem
 =====
-Changeset calculator between two data.
+Changeset calculator between two state of a data.
 
 Compatible PHP >= 5.4
 
 Snapshots currently supported :
 - Object
 - Array
+
+Documentation
+=============
+For any pieces of document, please look for the docs/ directory.
 
 Installation
 ============
@@ -49,5 +53,12 @@ $object = new stdclass;
 
 $snapshot = new ObjectSnapshot($object); // Totem\Snapshot\ObjectSnapshot
 $set = $snapshot->diff($snapshot); // Totem\Set
+```
+
+Running Tests
+=============
+```console
+$ php composer.phar install
+$ bin/phpunit
 ```
 
