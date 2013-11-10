@@ -11,7 +11,8 @@
 
 namespace test\Totem\Snapshot;
 
-use \stdClass;
+use \stdClass,
+    \ReflectionMethod;
 
 use \PHPUnit_Framework_TestCase;
 
@@ -20,37 +21,42 @@ use Totem\Snapshot\ArraySnapshot;
 class ArraySnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException Totem\Exception\IncomparableDataException
-     */
-    public function testDiffWrongArray()
-    {
-        $snapshot = new ArraySnapshot(['foo', 'bar']);
-        $snapshot->diff(new ArraySnapshot(['foo' => 'bar']));
-    }
-
-    public function testDiff()
-    {
-        $snapshot = new ArraySnapshot(['foo' => 'bar']);
-        $set = $snapshot->diff($snapshot);
-
-        $this->assertInstanceOf('Totem\\Set', $set);
-    }
-
-    /**
      * @dataProvider providerCompare
      */
     public function testCompare($compare, $expect)
     {
         $snapshot = new ArraySnapshot([]);
 
-        $this->assertSame($expect, $snapshot->isComparable($compare));
+        $refl = new ReflectionMethod('Totem\\Snapshot\\ArraySnapshot', 'isComparable');
+        $refl->setAccessible(true);
+
+        $this->assertSame($expect, $refl->invoke($snapshot, $compare));
     }
 
     public function providerCompare()
     {
+        $snapshot = $this->getMockBuilder('Totem\\Snapshot')
+                         ->disableOriginalConstructor()
+                         ->getMock();
+
         return [[new ArraySnapshot([]), true],
                 [new ArraySnapshot(['foo']), false],
-                [$this->getMock('Totem\\AbstractSnapshot'), false]];
+                [$snapshot, false]];
+    }
+
+    /**
+     * @dataProvider deepProvider
+     */
+    public function testDeepConstructor($value)
+    {
+        new ArraySnapshot(['foo' => $value]);
+    }
+
+    public function deepProvider()
+    {
+        return [[(object) ['bar' => 'baz']],
+                [['bar' => 'baz']],
+                ['fubar']];
     }
 }
 

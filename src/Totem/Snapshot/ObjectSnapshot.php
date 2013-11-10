@@ -16,14 +16,14 @@ use \ReflectionObject,
 
     \InvalidArgumentException;
 
-use Totem\AbstractSnapshot;
+use Totem\Snapshot;
 
 /**
  * Represents a snapshot of an object at a given time
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class ObjectSnapshot extends AbstractSnapshot
+class ObjectSnapshot extends Snapshot
 {
     /** @var string object's hash */
     protected $oid;
@@ -40,19 +40,42 @@ class ObjectSnapshot extends AbstractSnapshot
             throw new InvalidArgumentException('This is not an object');
         }
 
-        $this->oid = spl_object_hash($object);
-        $refl      = new ReflectionObject($object);
+        parent::__construct($object);
+
+        $this->data = [];
+        $this->oid  = spl_object_hash($object);
+        $refl       = new ReflectionObject($object);
+
+        if ($refl->isCloneable()) {
+            $this->raw  = clone $object;
+        }
 
         foreach ($refl->getProperties() as $reflProperty) {
             $reflProperty->setAccessible(true);
-            $this->data[$reflProperty->getName()] = $reflProperty->getValue($object);
+            $value = $reflProperty->getValue($object);
+
+            switch (gettype($value)) {
+                case 'object':
+                    $value = new static($value);
+                    break;
+
+                case 'array':
+                    $value = new ArraySnapshot($value);
+                    break;
+
+                default:
+                    $value = new Snapshot($value);
+                    break;
+            }
+
+            $this->data[$reflProperty->getName()] = $value;
         }
     }
 
     /** {@inheritDoc} */
-    public function isComparable(AbstractSnapshot $snapshot)
+    protected function isComparable(Snapshot $snapshot)
     {
-        if (!$snapshot instanceof static) {
+        if (!parent::isComparable($snapshot)) {
             return false;
         }
 

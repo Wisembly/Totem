@@ -17,6 +17,6 @@ class IncomparableDataException extends InvalidArgumentException
 {
     public function __construct()
     {
-        parent::__construct('This data is not comparable with the given one');
+        parent::__construct('This data is not comparable with the base');
     }
 }

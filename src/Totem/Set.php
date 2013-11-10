@@ -20,7 +20,8 @@ use \Countable,
     \BadMethodCallException,
     \InvalidArgumentException;
 
-use Totem\Snapshot\ObjectSnapshot,
+use Totem\Snapshot\ArraySnapshot,
+    Totem\Snapshot\ObjectSnapshot,
     Totem\Exception\IncomparableDataException;
 
 /**
@@ -36,12 +37,12 @@ class Set implements ArrayAccess, Countable, ChangeInterface
 
     private $changes = null;
 
-    public function __construct(array $old, array $new)
+    public function __construct(Snapshot $old, Snapshot $new)
     {
         $this->old = $old;
         $this->new = $new;
 
-        $this->compute($old, $new);
+        $this->compute();
     }
 
     /**
@@ -85,13 +86,21 @@ class Set implements ArrayAccess, Countable, ChangeInterface
         return $this->getChange($offset);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws BadMethodCallException if a unset is tried on a snapshot property
+     */
     public function offsetSet($offset, $value)
     {
         throw new BadMethodCallException('You cannot alter a changeset once it has been calculated');
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws BadMethodCallException if a unset is tried on a snapshot property
+     */
     public function offsetUnset($offset)
     {
         throw new BadMethodCallException('You cannot alter a changeset once it has been calculated');
@@ -106,75 +115,61 @@ class Set implements ArrayAccess, Countable, ChangeInterface
     /** Gets the snapshot the new one is compared to */
     public function getOld()
     {
-        return $this->old;
+        return $this->old->getRawData();
     }
 
     /** Gets the last snapshot */
     public function getNew()
     {
-        return $this->new;
+        return $this->new->getRawData();
     }
 
     /**
-     * Calculate the changeset between two arrays
+     * Calculate the changeset between two snapshots
      *
-     * Both arrays must have the same keys and the same size
-     *
-     * @param array $old Old array
-     * @param array $new New array
+     * The two snapshots must be of the same snapshot type
      *
      * @internal
-     * @throws InvalidArgumentException If the two arrays does not have the same keys
+     * @throws InvalidArgumentException If the two snapshots does not have the same data keys
      */
-    protected function compute(array $old, array $new)
+    protected function compute()
     {
-        if (array_keys($old) !== array_keys($new)) {
-            throw new \InvalidArgumentException('You should compare two arrays with the same keys !');
+        if (array_keys($this->old->getComparableData()) !== array_keys($this->new->getComparableData())) {
+            throw new \InvalidArgumentException('You can\'t compare two snapshots having a different structure');
         }
 
         $this->changes = [];
 
-        foreach (array_keys($new) as $key) {
+        foreach ($this->new as $key) {
             // -- if it is not the same type, then we may consider it changed
-            if (gettype($old[$key]) !== gettype($new[$key])) {
-                $this->changes[$key] = new Change($old[$key], $new[$key]);
+            if (!$this->new[$key] instanceof $this->old[$key]) {
+                $this->changes[$key] = new Change($this->old[$key]->getRawData(), $this->new[$key]->getRawData());
                 continue;
             }
 
-            // -- if it is an object, try to check the hashes and then the diff
-            if (is_object($old[$key])) {
-                $oldSnapshot = new ObjectSnapshot($old[$key]);
+            switch (true) {
+                // known type (object / array) : do a deep comparison
+                case $this->old[$key] instanceof ArraySnapshot:
+                case $this->old[$key] instanceof ObjectSnapshot:
+                    try {
+                        $set = $this->old[$key]->diff($this->new[$key]);
 
-                // @todo Check how to check the differences into this object if it is the same object
-                if (!$oldSnapshot->isComparable(new ObjectSnapshot($new[$key]))) {
-                    $this->changes[$key] = $set;
-                }
+                        if (0 < count($set)) {
+                            $this->changes[$key] = $set;
+                        }
+                    } catch (IncomparableDataException $e) {
+                        $this->changes[$key] = new Change($this->old[$key]->getRawData(), $this->new[$key]->getRawData());
+                    }
 
-                continue;
-            }
-
-            // -- if it is an array several step to check up
-            if (is_array($old[$key])) {
-                // -- not the same size ? Then it changed, completely
-                if (array_keys($old[$key]) !== array_keys($new[$key])) {
-                    $this->changes[$key] = new Change($old[$key], $new[$key]);
                     continue;
-                }
 
-                // -- same size / same keys ; return only what has changed
-                $set = new static($old[$key], $new[$key]);
-
-                if (0 !== count($set)) {
-                    $this->changes[$key] = $set;
-                }
-
-                continue;
-            }
-
-            // -- eventually, check if the two elements are equal
-            if ($old[$key] !== $new[$key]) {
-                $this->changes[$key] = new Change($old[$key], $new[$key]);
+                // unknown type : compare raw data
+                default:
+                    if ($this->old[$key]->getRawData() !== $this->new[$key]->getRawData()) {
+                        $this->changes[$key] = new Change($this->old[$key]->getRawData(), $this->new[$key]->getRawData());
+                    }
             }
         }
     }
 }
+

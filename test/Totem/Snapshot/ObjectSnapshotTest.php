@@ -11,7 +11,8 @@
 
 namespace test\Totem\Snapshot;
 
-use \stdClass;
+use \stdClass,
+    \ReflectionMethod;
 
 use \PHPUnit_Framework_TestCase;
 
@@ -20,41 +21,29 @@ use Totem\Snapshot\ObjectSnapshot;
 class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException Totem\Exception\IncomparableDataException
-     */
-    public function testDiffWrongOid()
-    {
-        $snapshot = new ObjectSnapshot(new stdClass);
-        $snapshot->diff(new ObjectSnapshot(new stdClass));
-    }
-
-    public function testDiff()
-    {
-        $object = new stdClass;
-
-        $snapshot = new ObjectSnapshot($object);
-        $set = $snapshot->diff($snapshot);
-
-        $this->assertInstanceOf('Totem\\Set', $set);
-    }
-
-    /**
      * @dataProvider providerCompare
      */
     public function testCompare($object, $compare, $expect)
     {
         $snapshot = new ObjectSnapshot($object);
 
-        $this->assertSame($expect, $snapshot->isComparable($compare));
+        $refl = new ReflectionMethod('Totem\\Snapshot\\ObjectSnapshot', 'isComparable');
+        $refl->setAccessible(true);
+
+        $this->assertSame($expect, $refl->invoke($snapshot, $compare));
     }
 
     public function providerCompare()
     {
         $object = new stdClass;
 
+        $snapshot = $this->getMockBuilder('Totem\\Snapshot')
+                         ->disableOriginalConstructor()
+                         ->getMock();
+
         return [[$object, new ObjectSnapshot($object), true],
                 [$object, new ObjectSnapshot(clone $object), false],
-                [$object, $this->getMock('Totem\\AbstractSnapshot'), false]];
+                [$object, $snapshot, false]];
     }
 
     /**
@@ -63,6 +52,21 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
     public function testConstructWithoutObject()
     {
         new ObjectSnapshot([]);
+    }
+
+    /**
+     * @dataProvider deepProvider
+     */
+    public function testDeepConstructor($value)
+    {
+        new ObjectSnapshot((object) ['foo' => $value]);
+    }
+
+    public function deepProvider()
+    {
+        return [[(object) ['bar' => 'baz']],
+                [['bar' => 'baz']],
+                ['fubar']];
     }
 }
 

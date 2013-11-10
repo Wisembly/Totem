@@ -27,7 +27,8 @@
 
     "autoload": {
         "psr-0": {
-            "Totem": "src/"
+            "Totem": "src/",
+            "test": ""
         }
     },
 
