@@ -8,6 +8,9 @@ Snapshots currently supported :
 - Object
 - Array
 
+Everything happens on the develop branch ; the master branch is for hotfixes or
+releases only !
+
 Documentation
 =============
 For any pieces of document, please look for the docs/ directory. You may also 
@@ -47,13 +50,27 @@ Basic Usage
 ```php
 <?php
 
-use \stdclass; // random object
 use Totem\Snapshot\ObjectSnapshot;
 
-$object = new stdclass;
-
+$object = (object) ['foo' => 'bar', 'baz' => 'qux'];
 $snapshot = new ObjectSnapshot($object); // Totem\Snapshot\ObjectSnapshot
-$set = $snapshot->diff($snapshot); // Totem\Set
+
+$object->foo = 'fubar';
+$set = $snapshot->diff(new ObjectSnapshot($object)); // Totem\Set
+
+var_dump($set->hasChanged('foo'),
+         $set->getChange('foo')->getOld(),
+         $set->getChange('foo')->getNew(),
+         $set->hasChanged('bar'));
+
+/* 
+ * expected result :
+ *
+ * bool(true)
+ * string(3) "bar"
+ * string(5) "fubar"
+ * bool(false)
+ */
 ```
 
 Running Tests
