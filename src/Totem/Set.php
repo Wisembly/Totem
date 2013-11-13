@@ -20,7 +20,8 @@ use \Countable,
     \BadMethodCallException,
     \InvalidArgumentException;
 
-use Totem\Snapshot\ArraySnapshot,
+use Totem\Snapshot,
+    Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot,
     Totem\Exception\IncomparableDataException;
 
@@ -141,9 +142,17 @@ class Set implements ArrayAccess, Countable, ChangeInterface
         $this->changes = [];
 
         foreach ($this->new as $key) {
+            $old = $this->old[$key];
+            $new = $this->new[$key];
+
+            if ($old instanceof Snapshot) {
+                $old = $old->getRawData();
+                $new = $new->getRawData();
+            }
+
             // -- if it is not the same type, then we may consider it changed
-            if (!$this->new[$key] instanceof $this->old[$key]) {
-                $this->changes[$key] = new Change($this->old[$key]->getRawData(), $this->new[$key]->getRawData());
+            if (gettype($old) !== gettype($new) || ($this->old[$key] instanceof Snapshot && !$this->new[$key] instanceof $this->old[$key])) {
+                $this->changes[$key] = new Change($old, $new);
                 continue;
             }
 
@@ -158,15 +167,15 @@ class Set implements ArrayAccess, Countable, ChangeInterface
                             $this->changes[$key] = $set;
                         }
                     } catch (IncomparableDataException $e) {
-                        $this->changes[$key] = new Change($this->old[$key]->getRawData(), $this->new[$key]->getRawData());
+                        $this->changes[$key] = new Change($old, $new);
                     }
 
                     continue;
 
                 // unknown type : compare raw data
                 default:
-                    if ($this->old[$key]->getRawData() !== $this->new[$key]->getRawData()) {
-                        $this->changes[$key] = new Change($this->old[$key]->getRawData(), $this->new[$key]->getRawData());
+                    if ($old !== $new) {
+                        $this->changes[$key] = new Change($old, $new);
                     }
             }
         }

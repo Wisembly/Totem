@@ -38,10 +38,6 @@ class ArraySnapshot extends Snapshot
                 case 'array':
                     $value = new static($value);
                     break;
-
-                default:
-                    $value = new Snapshot($value);
-                    break;
             }
         }
 

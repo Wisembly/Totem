@@ -62,10 +62,6 @@ class ObjectSnapshot extends Snapshot
                 case 'array':
                     $value = new ArraySnapshot($value);
                     break;
-
-                default:
-                    $value = new Snapshot($value);
-                    break;
             }
 
             $this->data[$reflProperty->getName()] = $value;
