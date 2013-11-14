@@ -21,9 +21,14 @@ use \Countable,
     \InvalidArgumentException;
 
 use Totem\AbstractSnapshot,
+    Totem\Exception\IncomparableDataException,
+
+    Totem\Change\Addition,
+    Totem\Change\Deletion,
+    Totem\Change\Modification,
+
     Totem\Snapshot\ArraySnapshot,
-    Totem\Snapshot\ObjectSnapshot,
-    Totem\Exception\IncomparableDataException;
+    Totem\Snapshot\ObjectSnapshot;
 
 /**
  * Represents a changeset
@@ -152,7 +157,7 @@ class Set implements ArrayAccess, Countable, ChangeInterface
 
             // -- if it is not the same type, then we may consider it changed
             if (gettype($old) !== gettype($new) || ($this->old[$key] instanceof AbstractSnapshot && !$this->new[$key] instanceof $this->old[$key])) {
-                $this->changes[$key] = new Change($old, $new);
+                $this->changes[$key] = new Modification($old, $new);
                 continue;
             }
 
@@ -161,7 +166,7 @@ class Set implements ArrayAccess, Countable, ChangeInterface
                 case $this->old[$key] instanceof ArraySnapshot:
                 case $this->old[$key] instanceof ObjectSnapshot:
                     if (!$this->old[$key]->isComparable($this->new[$key])) {
-                        $this->changes[$key] = new Change($old, $new);
+                        $this->changes[$key] = new Modification($old, $new);
                         continue;
                     }
 
@@ -176,7 +181,7 @@ class Set implements ArrayAccess, Countable, ChangeInterface
                 // unknown type : compare raw data
                 default:
                     if ($old !== $new) {
-                        $this->changes[$key] = new Change($old, $new);
+                        $this->changes[$key] = new Modification($old, $new);
                     }
             }
         }

@@ -87,12 +87,12 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
         $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
-        $this->assertInstanceOf('Totem\\Change', $set->getChange('fuqux'));
-        $this->assertInstanceOf('Totem\\Change', $set->getChange('foo'));
+        $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('fuqux'));
+        $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('foo'));
         $this->assertInstanceOf('Totem\\Set', $set->getChange('bar'));
-        $this->assertInstanceOf('Totem\\Change', $set['foo']);
+        $this->assertInstanceOf('Totem\\Change\\Modification', $set['foo']);
         $this->assertInstanceOf('Totem\\Set', $set->getChange('fubar'));
-        $this->assertInstanceOf('Totem\\Change', $set->getChange('fubar')->getChange('foo'));
+        $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('fubar')->getChange('foo'));
     }
 
     public function testGetters()

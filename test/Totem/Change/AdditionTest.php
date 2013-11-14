@@ -11,15 +11,15 @@
 
 namespace test\Totem\ChangeSet;
 
-use Totem\Change;
+use Totem\Change\Addition;
 
-class ChangeTest extends \PHPUnit_Framework_TestCase
+class AdditionTest extends \PHPUnit_Framework_TestCase
 {
-    public function testChange()
+    public function testConstructor()
     {
-        $change = new Change('Old state', 'New state');
+        $change = new Addition('New state');
 
-        $this->assertEquals('Old state', $change->getOld());
+        $this->assertNull($change->getOld());
         $this->assertEquals('New state', $change->getNew());
     }
 }

@@ -9,29 +9,28 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace Totem;
+namespace Totem\Change;
+
+use Totem\ChangeInterface;
 
 /**
- * Represents a change
+ * Represents something that was added in the original data
  *
- * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Change implements ChangeInterface
+class Addition implements ChangeInterface
 {
-    private $old; // old state
     private $new; // new state
 
-    public function __construct($old, $new)
+    public function __construct($new)
     {
-        $this->old = $old;
         $this->new = $new;
     }
 
     /** {@inheritDoc} */
     public function getOld()
     {
-        return $this->old;
+        return null;
     }
 
     /** {@inheritDoc} */
