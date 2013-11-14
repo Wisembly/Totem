@@ -37,7 +37,7 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
     {
         $object = new stdClass;
 
-        $snapshot = $this->getMockBuilder('Totem\\Snapshot')
+        $snapshot = $this->getMockBuilder('Totem\\AbstractSnapshot')
                          ->disableOriginalConstructor()
                          ->getMock();
 

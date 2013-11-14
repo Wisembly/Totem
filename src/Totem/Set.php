@@ -20,7 +20,7 @@ use \Countable,
     \BadMethodCallException,
     \InvalidArgumentException;
 
-use Totem\Snapshot,
+use Totem\AbstractSnapshot,
     Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot,
     Totem\Exception\IncomparableDataException;
@@ -38,7 +38,7 @@ class Set implements ArrayAccess, Countable, ChangeInterface
 
     private $changes = null;
 
-    public function __construct(Snapshot $old, Snapshot $new)
+    public function __construct(AbstractSnapshot $old, AbstractSnapshot $new)
     {
         $this->old = $old;
         $this->new = $new;
@@ -141,17 +141,17 @@ class Set implements ArrayAccess, Countable, ChangeInterface
 
         $this->changes = [];
 
-        foreach ($this->new as $key) {
+        foreach ($this->new->getDataKeys() as $key) {
             $old = $this->old[$key];
             $new = $this->new[$key];
 
-            if ($old instanceof Snapshot) {
+            if ($old instanceof AbstractSnapshot) {
                 $old = $old->getRawData();
                 $new = $new->getRawData();
             }
 
             // -- if it is not the same type, then we may consider it changed
-            if (gettype($old) !== gettype($new) || ($this->old[$key] instanceof Snapshot && !$this->new[$key] instanceof $this->old[$key])) {
+            if (gettype($old) !== gettype($new) || ($this->old[$key] instanceof AbstractSnapshot && !$this->new[$key] instanceof $this->old[$key])) {
                 $this->changes[$key] = new Change($old, $new);
                 continue;
             }

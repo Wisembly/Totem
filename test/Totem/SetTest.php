@@ -40,8 +40,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     public function testHasChanged()
     {
-        $old = new Snapshot(['data' => ['foo' => new Snapshot(['raw' => 'bar']), 'baz' => new Snapshot(['raw' => 'fubar'])]]);
-        $new = new Snapshot(['data' => ['foo' => new Snapshot(['raw' => 'bar']), 'baz' => new Snapshot(['raw' => 'fubaz'])]]);
+        $old = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubar']]);
+        $new = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubaz']]);
 
         $set = new Set($old, $new);
 
@@ -56,7 +56,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetChangeWithInvalidProperty()
     {
-        $old = new Snapshot(['data' => ['foo' => new Snapshot(['raw' => 'bar'])]]);
+        $old = new Snapshot(['data' => ['foo' => 'bar']]);
 
         $set = new Set($old, $old);
         $set->getChange('foo');
@@ -67,20 +67,20 @@ class SetTest extends \PHPUnit_Framework_TestCase
     {
         $o = [new stdClass, (object) ['foo' => 'bar']];
 
-        $old = $new = ['foo'   => new Snapshot(['raw' => 'foo']),
+        $old = $new = ['foo'   => 'foo',
                        'bar'   => new ArraySnapshot(['foo', 'bar']),
                        'baz'   => new ObjectSnapshot($o[0]),
-                       'qux'   => new Snapshot(['raw' => 'foo']),
+                       'qux'   => 'foo',
                        'fubar' => new ObjectSnapshot($o[1]),
                        'fubaz' => new ArraySnapshot(['foo', 'bar']),
                        'fuqux' => new ArraySnapshot(['foo'])];
 
         $o[1]->foo = 'baz';
 
-        $new['foo']   = new Snapshot(['raw' => 'bar']);
+        $new['foo']   = 'bar';
         $new['bar']   = new ArraySnapshot(['foo', 'baz']);
         $new['baz']   = new ObjectSnapshot($o[0]);
-        $new['qux']   = new Snapshot(['raw' => 42]);
+        $new['qux']   = 42;
         $new['fubar'] = new ObjectSnapshot($o[1]);
         $new['fubaz'] = new ArraySnapshot(['foo', 'bar', 'baz']);
         $new['fuqux'] = new ObjectSnapshot((object) []);
@@ -97,7 +97,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     public function testGetters()
     {
-        $old = new Snapshot(['data' => [new Snapshot(['raw' => 'foo'])], 'raw' => 'foo']);
+        $old = new Snapshot(['data' => ['foo'], 'raw' => 'foo']);
         $set = new Set($old, $old);
 
         $this->assertSame('foo', $set->getOld());

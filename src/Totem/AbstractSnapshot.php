@@ -27,18 +27,13 @@ use Totem\Exception\IncomparableDataException;
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Snapshot implements ArrayAccess, IteratorAggregate
+abstract class AbstractSnapshot implements ArrayAccess
 {
     /** @var array data stored in an array */
     protected $data = [];
 
     /** @var mixed raw data stored */
     protected $raw;
-
-    public function __construct($raw)
-    {
-        $this->raw = $raw;
-    }
 
     /**
      * Check if the two snapshots are comparable
@@ -104,6 +99,17 @@ class Snapshot implements ArrayAccess, IteratorAggregate
         return $this->raw;
     }
 
+    /**
+     * Returns the keys of the data
+     *
+     * @return array
+     * @throws InvalidArgumentException If the frozen data is not an array
+     */
+    final public function getDataKeys()
+    {
+        return array_keys($this->getComparableData());
+    }
+
     /** {@inheritDoc} */
     final public function offsetExists($offset)
     {
@@ -134,16 +140,6 @@ class Snapshot implements ArrayAccess, IteratorAggregate
     final public function offsetUnset($offset)
     {
         throw new BadMethodCallException('A snapshot is frozen by nature');
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws InvalidArgumentException if the frozen data is not an array
-     */
-    final public function getIterator()
-    {
-        return new ArrayIterator(array_keys($this->data));
     }
 }
 

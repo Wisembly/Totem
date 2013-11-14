@@ -35,7 +35,7 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
 
     public function providerCompare()
     {
-        $snapshot = $this->getMockBuilder('Totem\\Snapshot')
+        $snapshot = $this->getMockBuilder('Totem\\AbstractSnapshot')
                          ->disableOriginalConstructor()
                          ->getMock();
 

@@ -16,18 +16,18 @@ use \ReflectionObject,
 
     \InvalidArgumentException;
 
-use Totem\Snapshot;
+use Totem\AbstractSnapshot;
 
 /**
  * Represents a snapshot of an array at a given time
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class ArraySnapshot extends Snapshot
+class ArraySnapshot extends AbstractSnapshot
 {
     public function __construct(array $data)
     {
-        parent::__construct($data);
+        $this->raw = $data;
 
         foreach ($data as &$value) {
             switch (gettype($value)) {
@@ -45,7 +45,7 @@ class ArraySnapshot extends Snapshot
     }
 
     /** {@inheritDoc} */
-    protected function isComparable(Snapshot $snapshot)
+    protected function isComparable(AbstractSnapshot $snapshot)
     {
         if (!parent::isComparable($snapshot)) {
             return false;

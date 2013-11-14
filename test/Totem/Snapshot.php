@@ -11,9 +11,9 @@
 
 namespace test\Totem;
 
-use Totem\Snapshot as Base;
+use Totem\AbstractSnapshot;
 
-class Snapshot extends Base
+class Snapshot extends AbstractSnapshot
 {
     public function __construct(array $args = []) {
         $this->raw = isset($args['raw']) ? $args['raw'] : null;
@@ -21,7 +21,7 @@ class Snapshot extends Base
         $this->comparable = isset($args['comparable']) ? true === $args['comparable'] : null;
     }
 
-    public function isComparable(Base $s)
+    public function isComparable(AbstractSnapshot $s)
     {
         return null === $this->comparable ? parent::isComparable($s) : $this->comparable;
     }

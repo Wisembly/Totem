@@ -16,14 +16,14 @@ use \ReflectionObject,
 
     \InvalidArgumentException;
 
-use Totem\Snapshot;
+use Totem\AbstractSnapshot;
 
 /**
  * Represents a snapshot of an object at a given time
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class ObjectSnapshot extends Snapshot
+class ObjectSnapshot extends AbstractSnapshot
 {
     /** @var string object's hash */
     protected $oid;
@@ -40,14 +40,12 @@ class ObjectSnapshot extends Snapshot
             throw new InvalidArgumentException('This is not an object');
         }
 
-        parent::__construct($object);
-
-        $this->data = [];
-        $this->oid  = spl_object_hash($object);
-        $refl       = new ReflectionObject($object);
+        $this->raw = $object;
+        $this->oid = spl_object_hash($object);
+        $refl      = new ReflectionObject($object);
 
         if ($refl->isCloneable()) {
-            $this->raw  = clone $object;
+            $this->raw = clone $object;
         }
 
         foreach ($refl->getProperties() as $reflProperty) {
@@ -69,7 +67,7 @@ class ObjectSnapshot extends Snapshot
     }
 
     /** {@inheritDoc} */
-    protected function isComparable(Snapshot $snapshot)
+    protected function isComparable(AbstractSnapshot $snapshot)
     {
         if (!parent::isComparable($snapshot)) {
             return false;
