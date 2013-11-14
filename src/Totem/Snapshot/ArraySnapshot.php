@@ -27,21 +27,10 @@ class ArraySnapshot extends AbstractSnapshot
 {
     public function __construct(array $data)
     {
-        $this->raw = $data;
-
-        foreach ($data as &$value) {
-            switch (gettype($value)) {
-                case 'object':
-                    $value = new ObjectSnapshot($value);
-                    break;
-
-                case 'array':
-                    $value = new static($value);
-                    break;
-            }
-        }
-
+        $this->raw  = $data;
         $this->data = $data;
+
+        parent::normalize();
     }
 
     /** {@inheritDoc} */

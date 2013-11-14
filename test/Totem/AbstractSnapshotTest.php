@@ -11,6 +11,8 @@
 
 namespace test\Totem;
 
+use \ReflectionMethod;
+
 use \PHPUnit_Framework_TestCase;
 
 class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
@@ -68,6 +70,19 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
     {
         $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
         $snapshot[] = 'foo';
+    }
+
+    /**
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage The computed data is not an array, "string" given
+     */
+    public function testNormalizer()
+    {
+        $snapshot = new Snapshot(['data' => 'foo']);
+
+        $refl = new ReflectionMethod('Totem\\AbstractSnapshot', 'normalize');
+        $refl->setAccessible(true);
+        $refl->invoke($snapshot);
     }
 }
 

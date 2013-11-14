@@ -36,28 +36,6 @@ abstract class AbstractSnapshot implements ArrayAccess
     protected $raw;
 
     /**
-     * Check if the two snapshots are comparable
-     *
-     * @param self $snapshot Snapshot to be compared with
-     * @return boolean true if the two snapshots can be processed in a diff, false otherwise
-     */
-    protected function isComparable(self $snapshot)
-    {
-        if (!$snapshot instanceof static) {
-            return false;
-        }
-
-        return gettype($snapshot->raw) === gettype($this->raw);
-    }
-
-    /**
-     * Clone this object
-     *
-     * @codeCoverageIgnore
-     */
-    final private function __clone() {}
-
-    /**
      * Calculate the diff between two snapshots
      *
      * @param self $snapshot Snapshot to compare this one to
@@ -72,6 +50,16 @@ abstract class AbstractSnapshot implements ArrayAccess
         }
 
         return new Set($this, $snapshot);
+    }
+
+    /**
+     * Get the raw data fed to this snapshot
+     *
+     * @return mixed
+     */
+    final public function getRawData()
+    {
+        return $this->raw;
     }
 
     /**
@@ -90,16 +78,6 @@ abstract class AbstractSnapshot implements ArrayAccess
     }
 
     /**
-     * Get the raw data fed to this snapshot
-     *
-     * @return mixed
-     */
-    final public function getRawData()
-    {
-        return $this->raw;
-    }
-
-    /**
      * Returns the keys of the data
      *
      * @return array
@@ -109,6 +87,13 @@ abstract class AbstractSnapshot implements ArrayAccess
     {
         return array_keys($this->getComparableData());
     }
+
+    /**
+     * Clone this object
+     *
+     * @codeCoverageIgnore
+     */
+    final private function __clone() {}
 
     /** {@inheritDoc} */
     final public function offsetExists($offset)
@@ -140,6 +125,45 @@ abstract class AbstractSnapshot implements ArrayAccess
     final public function offsetUnset($offset)
     {
         throw new BadMethodCallException('A snapshot is frozen by nature');
+    }
+
+    /**
+     * Finish data initialization
+     *
+     * To be called by child classes *after* the data has been initialized
+     */
+    protected function normalize()
+    {
+        if (!is_array($this->data)) {
+            throw new InvalidArgumentException('The computed data is not an array, "' . gettype($this->data) . '" given');
+        }
+
+        foreach ($this->data as &$value) {
+            switch (gettype($value)) {
+                case 'object':
+                    $value = new Snapshot\ObjectSnapshot($value);
+                    break;
+
+                case 'array':
+                    $value = new Snapshot\ArraySnapshot($value);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Check if the two snapshots are comparable
+     *
+     * @param self $snapshot Snapshot to be compared with
+     * @return boolean true if the two snapshots can be processed in a diff, false otherwise
+     */
+    protected function isComparable(self $snapshot)
+    {
+        if (!$snapshot instanceof static) {
+            return false;
+        }
+
+        return gettype($snapshot->raw) === gettype($this->raw);
     }
 }
 
