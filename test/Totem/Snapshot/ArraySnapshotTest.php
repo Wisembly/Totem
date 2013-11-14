@@ -26,11 +26,7 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
     public function testCompare($compare, $expect)
     {
         $snapshot = new ArraySnapshot([]);
-
-        $refl = new ReflectionMethod('Totem\\Snapshot\\ArraySnapshot', 'isComparable');
-        $refl->setAccessible(true);
-
-        $this->assertSame($expect, $refl->invoke($snapshot, $compare));
+        $this->assertSame($expect, $snapshot->isComparable($compare));
     }
 
     public function providerCompare()

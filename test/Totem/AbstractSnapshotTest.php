@@ -84,5 +84,12 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
         $refl->setAccessible(true);
         $refl->invoke($snapshot);
     }
+
+    public function testDiff()
+    {
+        $snapshot = new Snapshot(['data' => []]);
+
+        $this->assertInstanceOf('Totem\\Set', $snapshot->diff($snapshot));
+    }
 }
 

@@ -160,14 +160,15 @@ class Set implements ArrayAccess, Countable, ChangeInterface
                 // known type (object / array) : do a deep comparison
                 case $this->old[$key] instanceof ArraySnapshot:
                 case $this->old[$key] instanceof ObjectSnapshot:
-                    try {
-                        $set = $this->old[$key]->diff($this->new[$key]);
-
-                        if (0 < count($set)) {
-                            $this->changes[$key] = $set;
-                        }
-                    } catch (IncomparableDataException $e) {
+                    if (!$this->old[$key]->isComparable($this->new[$key])) {
                         $this->changes[$key] = new Change($old, $new);
+                        continue;
+                    }
+
+                    $set = new static($this->old[$key], $this->new[$key]);
+
+                    if (0 < count($set)) {
+                        $this->changes[$key] = $set;
                     }
 
                     continue;

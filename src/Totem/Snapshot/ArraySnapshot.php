@@ -34,7 +34,7 @@ class ArraySnapshot extends AbstractSnapshot
     }
 
     /** {@inheritDoc} */
-    protected function isComparable(AbstractSnapshot $snapshot)
+    public function isComparable(AbstractSnapshot $snapshot)
     {
         if (!parent::isComparable($snapshot)) {
             return false;

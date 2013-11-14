@@ -26,11 +26,7 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
     public function testCompare($object, $compare, $expect)
     {
         $snapshot = new ObjectSnapshot($object);
-
-        $refl = new ReflectionMethod('Totem\\Snapshot\\ObjectSnapshot', 'isComparable');
-        $refl->setAccessible(true);
-
-        $this->assertSame($expect, $refl->invoke($snapshot, $compare));
+        $this->assertSame($expect, $snapshot->isComparable($compare));
     }
 
     public function providerCompare()

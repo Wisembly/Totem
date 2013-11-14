@@ -128,6 +128,21 @@ abstract class AbstractSnapshot implements ArrayAccess
     }
 
     /**
+     * Check if the two snapshots are comparable
+     *
+     * @param self $snapshot Snapshot to be compared with
+     * @return boolean true if the two snapshots can be processed in a diff, false otherwise
+     */
+    public function isComparable(self $snapshot)
+    {
+        if (!$snapshot instanceof static) {
+            return false;
+        }
+
+        return gettype($snapshot->raw) === gettype($this->raw);
+    }
+
+    /**
      * Finish data initialization
      *
      * To be called by child classes *after* the data has been initialized
@@ -149,21 +164,6 @@ abstract class AbstractSnapshot implements ArrayAccess
                     break;
             }
         }
-    }
-
-    /**
-     * Check if the two snapshots are comparable
-     *
-     * @param self $snapshot Snapshot to be compared with
-     * @return boolean true if the two snapshots can be processed in a diff, false otherwise
-     */
-    protected function isComparable(self $snapshot)
-    {
-        if (!$snapshot instanceof static) {
-            return false;
-        }
-
-        return gettype($snapshot->raw) === gettype($this->raw);
     }
 }
 
