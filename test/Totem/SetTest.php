@@ -22,20 +22,19 @@ use Totem\Set,
 class SetTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException InvalidArgumentException
      * @dataProvider invalidEntryProvider
      */
-    public function testSetChangesWithInvalidEntity($old, $new)
+    public function testSetChangesWithChangedStructure($old, $new, $class)
     {
-        new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
+        $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
+
+        $this->assertInstanceOf('Totem\\Change\\' . $class, $set->getChange('1'));
     }
 
     public function invalidEntryProvider()
     {
-        return [[['foo'], ['bar' => 'baz']],
-                [['foo'], ['bar', 'baz']],
-                [['foo', 'bar'], ['baz']],
-                [['foo' => 'bar'], ['baz']]];
+        return [[['foo'], ['foo', 'bar'], 'Addition'],
+                [['foo', 'bar'], ['foo'], 'Removal']];
     }
 
     public function testHasChanged()

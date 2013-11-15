@@ -23,8 +23,8 @@ use \Countable,
 use Totem\AbstractSnapshot,
     Totem\Exception\IncomparableDataException,
 
+    Totem\Change\Removal,
     Totem\Change\Addition,
-    Totem\Change\Deletion,
     Totem\Change\Modification,
 
     Totem\Snapshot\ArraySnapshot,
@@ -131,13 +131,14 @@ class Set extends AbstractChange implements ArrayAccess, Countable
      */
     private function compute(AbstractSnapshot $old, AbstractSnapshot $new)
     {
-        if ($old->getDataKeys() !== $new->getDataKeys()) {
-            throw new \InvalidArgumentException('You can\'t compare two snapshots having a different structure');
-        }
-
         $this->changes = [];
 
-        foreach ($new->getDataKeys() as $key) {
+        foreach ($old->getDataKeys() as $key) {
+            if (!isset($new[$key])) {
+                $this->changes[$key] = new Removal($old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key]);
+                continue;
+            }
+
             $current = ['old' => $old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key],
                         'new' => $new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]];
 
@@ -164,6 +165,11 @@ class Set extends AbstractChange implements ArrayAccess, Countable
                         $this->changes[$key] = new Modification($current['old'], $current['new']);
                     }
             }
+        }
+
+        // added elements
+        foreach (array_diff($new->getDataKeys(), $old->getDataKeys()) as $key) {
+            $this->changes[$key] = new Addition($new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]);
         }
     }
 }
