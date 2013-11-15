@@ -11,32 +11,18 @@
 
 namespace Totem\Change;
 
-use Totem\ChangeInterface;
+use Totem\AbstractChange;
 
 /**
  * Represents something that was removed from the original data
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Removal implements ChangeInterface
+class Removal extends AbstractChange
 {
-    private $old; // old state
-
     public function __construct($old)
     {
-        $this->old = $old;
-    }
-
-    /** {@inheritDoc} */
-    public function getOld()
-    {
-        return $this->old;
-    }
-
-    /** {@inheritDoc} */
-    public function getNew()
-    {
-        return null;
+        parent::__construct($old, null);
     }
 }
 

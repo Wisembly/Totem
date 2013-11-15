@@ -11,35 +11,13 @@
 
 namespace Totem\Change;
 
-use Totem\ChangeInterface;
+use Totem\AbstractChange;
 
 /**
  * Represents a modification
  *
- * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Modification implements ChangeInterface
-{
-    private $old; // old state
-    private $new; // new state
-
-    public function __construct($old, $new)
-    {
-        $this->old = $old;
-        $this->new = $new;
-    }
-
-    /** {@inheritDoc} */
-    public function getOld()
-    {
-        return $this->old;
-    }
-
-    /** {@inheritDoc} */
-    public function getNew()
-    {
-        return $this->new;
-    }
-}
+class Modification extends AbstractChange
+{}
 

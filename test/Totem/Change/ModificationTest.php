@@ -15,12 +15,21 @@ use Totem\Change\Modification;
 
 class ModificationTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstructor()
-    {
-        $change = new Modification('Old state', 'New state');
+    private $change;
 
-        $this->assertEquals('Old state', $change->getOld());
-        $this->assertEquals('New state', $change->getNew());
+    public function setUp()
+    {
+        $this->change = new Modification('old', 'new');
+    }
+
+    public function testOld()
+    {
+        $this->assertSame('old', $this->change->getOld());
+    }
+
+    public function testNew()
+    {
+        $this->assertSame('new', $this->change->getNew());
     }
 }
 

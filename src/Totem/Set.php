@@ -36,19 +36,15 @@ use Totem\AbstractSnapshot,
  * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Set implements ArrayAccess, Countable, ChangeInterface
+class Set extends AbstractChange implements ArrayAccess, Countable
 {
-    private $old;
-    private $new;
-
     private $changes = null;
 
     public function __construct(AbstractSnapshot $old, AbstractSnapshot $new)
     {
-        $this->old = $old;
-        $this->new = $new;
+        parent::__construct($old->getRawData(), $new->getRawData());
 
-        $this->compute();
+        $this->compute($old, $new);
     }
 
     /**
@@ -56,7 +52,11 @@ class Set implements ArrayAccess, Countable, ChangeInterface
      *
      * @param  string $property
      *
-     * @return ChangeInterface Set if it was a recursive change, Change otherwise
+     * @return AbstractChange Set if it is a recursive change,
+     *                        Addition if something was added,
+     *                        Removal if something it was deleted, or
+     *                        Modification otherwise
+     *
      * @throws OutOfBoundsException The property doesn't exist or wasn't changed
      */
     public function getChange($property)
@@ -118,59 +118,45 @@ class Set implements ArrayAccess, Countable, ChangeInterface
         return count($this->changes);
     }
 
-    /** Gets the snapshot the new one is compared to */
-    public function getOld()
-    {
-        return $this->old->getRawData();
-    }
-
-    /** Gets the last snapshot */
-    public function getNew()
-    {
-        return $this->new->getRawData();
-    }
-
     /**
      * Calculate the changeset between two snapshots
      *
      * The two snapshots must be of the same snapshot type
      *
+     * @param AbstractSnapshot $old Old snapshot
+     * @param AbstractSnapshot $new New snapshot
+     *
      * @internal
      * @throws InvalidArgumentException If the two snapshots does not have the same data keys
      */
-    protected function compute()
+    private function compute(AbstractSnapshot $old, AbstractSnapshot $new)
     {
-        if (array_keys($this->old->getComparableData()) !== array_keys($this->new->getComparableData())) {
+        if (array_keys($old->getComparableData()) !== array_keys($new->getComparableData())) {
             throw new \InvalidArgumentException('You can\'t compare two snapshots having a different structure');
         }
 
         $this->changes = [];
 
-        foreach ($this->new->getDataKeys() as $key) {
-            $old = $this->old[$key];
-            $new = $this->new[$key];
-
-            if ($old instanceof AbstractSnapshot) {
-                $old = $old->getRawData();
-                $new = $new->getRawData();
-            }
+        foreach ($new->getDataKeys() as $key) {
+            $current = ['old' => $old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key],
+                        'new' => $new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]];
 
             // -- if it is not the same type, then we may consider it changed
-            if (gettype($old) !== gettype($new) || ($this->old[$key] instanceof AbstractSnapshot && !$this->new[$key] instanceof $this->old[$key])) {
-                $this->changes[$key] = new Modification($old, $new);
+            if ($old[$key] instanceof AbstractSnapshot && !$new[$key] instanceof $old[$key]) {
+                $this->changes[$key] = new Modification($current['old'], $current['new']);
                 continue;
             }
 
             switch (true) {
                 // known type (object / array) : do a deep comparison
-                case $this->old[$key] instanceof ArraySnapshot:
-                case $this->old[$key] instanceof ObjectSnapshot:
-                    if (!$this->old[$key]->isComparable($this->new[$key])) {
-                        $this->changes[$key] = new Modification($old, $new);
+                case $old[$key] instanceof ArraySnapshot:
+                case $old[$key] instanceof ObjectSnapshot:
+                    if (!$old[$key]->isComparable($new[$key])) {
+                        $this->changes[$key] = new Modification($current['old'], $current['new']);
                         continue;
                     }
 
-                    $set = new static($this->old[$key], $this->new[$key]);
+                    $set = new static($old[$key], $new[$key]);
 
                     if (0 < count($set)) {
                         $this->changes[$key] = $set;
@@ -180,8 +166,8 @@ class Set implements ArrayAccess, Countable, ChangeInterface
 
                 // unknown type : compare raw data
                 default:
-                    if ($old !== $new) {
-                        $this->changes[$key] = new Modification($old, $new);
+                    if ($current['old'] !== $current['new']) {
+                        $this->changes[$key] = new Modification($current['old'], $current['new']);
                     }
             }
         }

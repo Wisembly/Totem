@@ -15,12 +15,21 @@ use Totem\Change\Removal;
 
 class RemovalTest extends \PHPUnit_Framework_TestCase
 {
-    public function testConstructor()
-    {
-        $change = new Removal('Old state');
+    private $change;
 
-        $this->assertNull($change->getNew());
-        $this->assertEquals('Old state', $change->getOld());
+    public function setUp()
+    {
+        $this->change = new Removal('old');
+    }
+
+    public function testOld()
+    {
+        $this->assertSame('old', $this->change->getOld());
+    }
+
+    public function testNew()
+    {
+        $this->assertNull($this->change->getNew());
     }
 }
 
