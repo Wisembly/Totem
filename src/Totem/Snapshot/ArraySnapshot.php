@@ -32,15 +32,5 @@ class ArraySnapshot extends AbstractSnapshot
 
         parent::normalize();
     }
-
-    /** {@inheritDoc} */
-    public function isComparable(AbstractSnapshot $snapshot)
-    {
-        if (!parent::isComparable($snapshot)) {
-            return false;
-        }
-
-        return array_keys($snapshot->data) === array_keys($this->data);
-    }
 }
 

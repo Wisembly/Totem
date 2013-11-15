@@ -36,7 +36,6 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
                          ->getMock();
 
         return [[new ArraySnapshot([]), true],
-                [new ArraySnapshot(['foo']), false],
                 [$snapshot, false]];
     }
 
