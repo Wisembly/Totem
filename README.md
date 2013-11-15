@@ -1,5 +1,9 @@
 Totem
 =====
+[![Build Status](https://travis-ci.org/Taluu/Totem.png?branch=develop)](https://travis-ci.org/Taluu/Totem)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Taluu/Totem/badges/quality-score.png?s=b71f67e353a379e19b651697285ffed18d6f1554)](https://scrutinizer-ci.com/g/Taluu/Totem/)
+[![Code Coverage](https://scrutinizer-ci.com/g/Taluu/Totem/badges/coverage.png?s=526dc791403caf731f6abb78d713291c68cf8446)](https://scrutinizer-ci.com/g/Taluu/Totem/)
+
 Changeset calculator between two state of a data.
 
 Compatible PHP >= 5.4
@@ -38,7 +42,7 @@ You have multiple ways to install Totem. If you are unsure what to do, go with
 
       {
         "require": {
-          "taluu/totem": "~1.1.0"
+          "taluu/totem": "~1.2.0"
         }
       }
     ```
