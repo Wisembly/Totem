@@ -131,7 +131,7 @@ class Set extends AbstractChange implements ArrayAccess, Countable
      */
     private function compute(AbstractSnapshot $old, AbstractSnapshot $new)
     {
-        if (array_keys($old->getComparableData()) !== array_keys($new->getComparableData())) {
+        if ($old->getDataKeys() !== $new->getDataKeys()) {
             throw new \InvalidArgumentException('You can\'t compare two snapshots having a different structure');
         }
 
