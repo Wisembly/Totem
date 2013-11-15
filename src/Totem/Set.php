@@ -141,12 +141,6 @@ class Set extends AbstractChange implements ArrayAccess, Countable
             $current = ['old' => $old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key],
                         'new' => $new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]];
 
-            // -- if it is not the same type, then we may consider it changed
-            if ($old[$key] instanceof AbstractSnapshot && !$new[$key] instanceof $old[$key]) {
-                $this->changes[$key] = new Modification($current['old'], $current['new']);
-                continue;
-            }
-
             switch (true) {
                 // known type (object / array) : do a deep comparison
                 case $old[$key] instanceof ArraySnapshot:
