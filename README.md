@@ -8,31 +8,24 @@ Totem
        \\\\////
         |.)(.|
         | || |
-        \(__)/   Changeset calculator between two state of a data.
-        |-..-|   Compatible PHP >= 5.4
+        \(__)/   Changeset calculator between two state of a data
+        |-..-|   Requires PHP 5.4 ; Compatible PHP 5.5
         |o\/o|
    .----\    /----.
   / / / |~~~~| \ \ \
  / / / /|::::|\ \ \ \
 '-'-'-'-|::::|-'-'-'-'
        (((^^)))
-        >>><<<
-        ||||||
-        (o)(o)
+        >>><<<   Snapshots currently natively supported :
+        ||||||   - Object
+        (o)(o)   - Array
         | /\ |
-        (====)
-        |_/\_|
+        (====)   Everything happens on the develop branch ; the master branch
+        |_/\_|   is for releases or hotfixes only !
         (_/\_)
-       _|_,__|                                                     
-      (___\____)
+       _|_,__|
+      (___\___)
 ```
-
-Snapshots currently supported :
-- Object
-- Array
-
-Everything happens on the develop branch ; the master branch is for hotfixes or
-releases only !
 
 Documentation
 =============
