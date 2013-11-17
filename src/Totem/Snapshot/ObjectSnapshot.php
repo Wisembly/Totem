@@ -29,9 +29,10 @@ class ObjectSnapshot extends AbstractSnapshot
     protected $oid;
 
     /**
-     * Build this snapshot
+     * Build this snapshot.
      *
      * @param object $object Object to fix at the current moment
+     *
      * @throws InvalidArgumentException If this is not an object
      */
     public function __construct($object)

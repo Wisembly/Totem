@@ -15,7 +15,8 @@ use Totem\AbstractSnapshot;
 
 class Snapshot extends AbstractSnapshot
 {
-    public function __construct(array $args = []) {
+    public function __construct(array $args = [])
+    {
         $this->raw = isset($args['raw']) ? $args['raw'] : null;
         $this->data = isset($args['data']) ? $args['data'] : [];
         $this->comparable = isset($args['comparable']) ? true === $args['comparable'] : null;
