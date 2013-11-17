@@ -13,20 +13,16 @@ namespace Totem;
 
 use \Countable,
     \ArrayAccess,
-    \ArrayIterator,
-    \IteratorAggregate,
 
     \OutOfBoundsException,
     \BadMethodCallException,
     \InvalidArgumentException;
 
-use Totem\AbstractSnapshot,
-    Totem\Exception\IncomparableDataException,
-
-    Totem\Change\Removal,
+use Totem\Change\Removal,
     Totem\Change\Addition,
     Totem\Change\Modification,
 
+    Totem\AbstractSnapshot,
     Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot;
 

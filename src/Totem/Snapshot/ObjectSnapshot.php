@@ -12,7 +12,6 @@
 namespace Totem\Snapshot;
 
 use \ReflectionObject,
-    \ReflectionProperty,
 
     \InvalidArgumentException;
 
@@ -49,6 +48,7 @@ class ObjectSnapshot extends AbstractSnapshot
             $this->raw = clone $object;
         }
 
+        /** @var \ReflectionProperty $reflProperty */
         foreach ($refl->getProperties() as $reflProperty) {
             $reflProperty->setAccessible(true);
             $value = $reflProperty->getValue($object);

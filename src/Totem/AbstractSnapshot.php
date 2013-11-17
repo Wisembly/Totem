@@ -11,11 +11,9 @@
 
 namespace Totem;
 
-use \ArrayAccess,
-    \ArrayIterator,
-    \IteratorAggregate,
+use \ArrayAccess;
 
-    \BadMethodCallException,
+use \BadMethodCallException,
     \InvalidArgumentException;
 
 use Totem\Exception\IncomparableDataException;

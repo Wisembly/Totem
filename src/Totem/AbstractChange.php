@@ -11,10 +11,6 @@
 
 namespace Totem;
 
-use \ArrayAccess,
-    \BadMethodCallException,
-    \InvalidArgumentException;
-
 /**
  * Base class for a Change
  *
