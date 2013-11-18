@@ -3,17 +3,30 @@ Totem
 [![Build Status](https://travis-ci.org/Taluu/Totem.png?branch=develop)](https://travis-ci.org/Taluu/Totem)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Taluu/Totem/badges/quality-score.png?s=b71f67e353a379e19b651697285ffed18d6f1554)](https://scrutinizer-ci.com/g/Taluu/Totem/)
 [![Code Coverage](https://scrutinizer-ci.com/g/Taluu/Totem/badges/coverage.png?s=526dc791403caf731f6abb78d713291c68cf8446)](https://scrutinizer-ci.com/g/Taluu/Totem/)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825/mini.png)](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825)
 
-Changeset calculator between two state of a data.
-
-Compatible PHP >= 5.4
-
-Snapshots currently supported :
-- Object
-- Array
-
-Everything happens on the develop branch ; the master branch is for hotfixes or
-releases only !
+```
+       \\\\////
+        |.)(.|
+        | || |
+        \(__)/   Changeset calculator between two state of a data
+        |-..-|   Requires PHP 5.4 ; Compatible PHP 5.5
+        |o\/o|
+   .----\    /----.
+  / / / |~~~~| \ \ \
+ / / / /|::::|\ \ \ \
+'-'-'-'-|::::|-'-'-'-'
+       (((^^)))
+        >>><<<   Snapshots currently natively supported :
+        ||||||   - Object
+        (o)(o)   - Array
+        | /\ |
+        (====)   Everything happens on the develop branch ; the master branch
+        |_/\_|   is for releases or hotfixes only !
+        (_/\_)
+       _|_,__|
+      (___\___)
+```
 
 Documentation
 =============

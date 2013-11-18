@@ -12,7 +12,6 @@
 namespace Totem\Snapshot;
 
 use \ReflectionObject,
-    \ReflectionProperty,
 
     \InvalidArgumentException;
 
@@ -29,9 +28,10 @@ class ObjectSnapshot extends AbstractSnapshot
     protected $oid;
 
     /**
-     * Build this snapshot
+     * Build this snapshot.
      *
      * @param object $object Object to fix at the current moment
+     *
      * @throws InvalidArgumentException If this is not an object
      */
     public function __construct($object)
@@ -48,6 +48,7 @@ class ObjectSnapshot extends AbstractSnapshot
             $this->raw = clone $object;
         }
 
+        /** @var \ReflectionProperty $reflProperty */
         foreach ($refl->getProperties() as $reflProperty) {
             $reflProperty->setAccessible(true);
             $value = $reflProperty->getValue($object);

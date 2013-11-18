@@ -11,11 +11,9 @@
 
 namespace Totem;
 
-use \ArrayAccess,
-    \ArrayIterator,
-    \IteratorAggregate,
+use \ArrayAccess;
 
-    \BadMethodCallException,
+use \BadMethodCallException,
     \InvalidArgumentException;
 
 use Totem\Exception\IncomparableDataException;
@@ -131,6 +129,7 @@ abstract class AbstractSnapshot implements ArrayAccess
      * Check if the two snapshots are comparable
      *
      * @param self $snapshot Snapshot to be compared with
+     *
      * @return boolean true if the two snapshots can be processed in a diff, false otherwise
      */
     public function isComparable(self $snapshot)

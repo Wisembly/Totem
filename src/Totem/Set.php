@@ -13,20 +13,16 @@ namespace Totem;
 
 use \Countable,
     \ArrayAccess,
-    \ArrayIterator,
-    \IteratorAggregate,
 
     \OutOfBoundsException,
     \BadMethodCallException,
     \InvalidArgumentException;
 
-use Totem\AbstractSnapshot,
-    Totem\Exception\IncomparableDataException,
-
-    Totem\Change\Removal,
+use Totem\Change\Removal,
     Totem\Change\Addition,
     Totem\Change\Modification,
 
+    Totem\AbstractSnapshot,
     Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot;
 
@@ -50,7 +46,7 @@ class Set extends AbstractChange implements ArrayAccess, Countable
     /**
      * Retrieve a property change
      *
-     * @param  string $property
+     * @param string $property
      *
      * @return AbstractChange Set if it is a recursive change,
      *                        Addition if something was added,
@@ -71,7 +67,7 @@ class Set extends AbstractChange implements ArrayAccess, Countable
     /**
      * Test if the given property has been changed
      *
-     * @param  string  $property
+     * @param string $property
      *
      * @return boolean
      */
