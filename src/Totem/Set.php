@@ -14,6 +14,9 @@ namespace Totem;
 use \Countable,
     \ArrayAccess,
 
+    \ArrayIterator,
+    \IteratorAggregate,
+
     \OutOfBoundsException,
     \BadMethodCallException,
     \InvalidArgumentException;
@@ -32,9 +35,9 @@ use Totem\Change\Removal,
  * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Set extends AbstractChange implements ArrayAccess, Countable
+class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggregate
 {
-    private $changes = null;
+    protected $changes = null;
 
     public function __construct(AbstractSnapshot $old, AbstractSnapshot $new)
     {
@@ -112,6 +115,12 @@ class Set extends AbstractChange implements ArrayAccess, Countable
     public function count()
     {
         return count($this->changes);
+    }
+
+    /** {@inheritDoc} */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->changes);
     }
 
     /**

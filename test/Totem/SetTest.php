@@ -94,6 +94,13 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('fubar')->getChange('foo'));
     }
 
+    public function testIterator()
+    {
+        $set = new Set(new Snapshot(['data' => ['foo']]), new Snapshot(['data' => ['bar']]));
+
+        $this->assertInstanceOf('ArrayIterator', $set->getIterator());
+    }
+
     public function testGetters()
     {
         $old = new Snapshot(['data' => ['foo'], 'raw' => 'foo']);
