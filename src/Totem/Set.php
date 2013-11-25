@@ -139,7 +139,7 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
         $this->changes = [];
 
         foreach ($old->getDataKeys() as $key) {
-            if (!isset($new[$key])) {
+            if (!in_array($key, $new->getDataKeys())) {
                 $this->changes[$key] = new Removal($old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key]);
                 continue;
             }
