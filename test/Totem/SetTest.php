@@ -66,23 +66,27 @@ class SetTest extends \PHPUnit_Framework_TestCase
     {
         $o = [new stdClass, (object) ['foo' => 'bar']];
 
-        $old = $new = ['foo'   => 'foo',
-                       'bar'   => new ArraySnapshot(['foo', 'bar']),
-                       'baz'   => new ObjectSnapshot($o[0]),
-                       'qux'   => 'foo',
-                       'fubar' => new ObjectSnapshot($o[1]),
-                       'fubaz' => new ArraySnapshot(['foo', 'bar']),
-                       'fuqux' => new ArraySnapshot(['foo'])];
+        $old = $new = ['foo'    => 'foo',
+                       'bar'    => new ArraySnapshot(['foo', 'bar']),
+                       'baz'    => new ObjectSnapshot($o[0]),
+                       'qux'    => 'foo',
+                       'fubar'  => new ObjectSnapshot($o[1]),
+                       'fubaz'  => new ArraySnapshot(['foo', 'bar']),
+                       'fuqux'  => new ArraySnapshot(['foo']),
+                       'kludge' => new ArraySnapshot(['foo']),
+                       'xyzzy'  => new ArraySnapshot(['foo'])];
 
         $o[1]->foo = 'baz';
 
-        $new['foo']   = 'bar';
-        $new['bar']   = new ArraySnapshot(['foo', 'baz']);
-        $new['baz']   = new ObjectSnapshot($o[0]);
-        $new['qux']   = 42;
-        $new['fubar'] = new ObjectSnapshot($o[1]);
-        $new['fubaz'] = new ArraySnapshot(['foo', 'bar', 'baz']);
-        $new['fuqux'] = new ObjectSnapshot((object) []);
+        $new['foo']    = 'bar';
+        $new['bar']    = new ArraySnapshot(['foo', 'baz']);
+        $new['baz']    = new ObjectSnapshot($o[0]);
+        $new['qux']    = 42;
+        $new['fubar']  = new ObjectSnapshot($o[1]);
+        $new['fubaz']  = new ArraySnapshot(['foo', 'bar', 'baz']);
+        $new['fuqux']  = new ObjectSnapshot((object) []);
+        $new['kludge'] = 42;
+        $new['xyzzy']  = (object) [];
 
         $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
@@ -92,6 +96,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Totem\\Change\\Modification', $set['foo']);
         $this->assertInstanceOf('Totem\\Set', $set->getChange('fubar'));
         $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('fubar')->getChange('foo'));
+        $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('kludge'));
+        $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('xyzzy'));
     }
 
     public function testIterator()

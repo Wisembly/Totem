@@ -148,9 +148,18 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
                         'new' => $new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]];
 
             switch (true) {
-                // known type (object / array) : do a deep comparison
-                case $old[$key] instanceof ArraySnapshot:
-                case $old[$key] instanceof ObjectSnapshot:
+                // different types
+                case gettype($old[$key]) !== gettype($new[$key]):
+                    $this->changes[$key] = new Modification($current['old'], $current['new']);
+                    continue;
+
+                // known type : do a deep comparison
+                case $old[$key] instanceof AbstractSnapshot:
+                    if (!$new[$key] instanceof AbstractSnapshot) {
+                        $this->changes[$key] = new Modification($current['old'], $current['new']);
+                        continue;
+                    }
+
                     if (!$old[$key]->isComparable($new[$key])) {
                         $this->changes[$key] = new Modification($current['old'], $current['new']);
                         continue;
