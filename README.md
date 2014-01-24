@@ -20,14 +20,12 @@ Totem
  / / / /|::::|\ \ \ \
 '-'-'-'-|::::|-'-'-'-'
        (((^^)))
-        >>><<<   Snapshots currently natively supported :
-        ||||||   - Object
-        (o)(o)   - Array
-        | /\ |
-        (====)   Everything happens on the develop branch ; the master branch
-        |_/\_|   is for releases or hotfixes only !
-        (_/\_)
-       _|_,__|
+        >>><<< 
+        ||||||   Snapshots currently natively supported :
+        (o)(o)   - Object
+        | /\ |   - Array
+        (====)
+       _(_,__)
       (___\___)
 ```
 
@@ -96,7 +94,7 @@ var_dump($set->hasChanged('foo'),
 Running Tests
 =============
 ```console
-$ php composer.phar install
+$ php composer.phar install --dev
 $ bin/phpunit
 ```
 
