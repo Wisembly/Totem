@@ -21,9 +21,7 @@ use Totem\Set,
 
 class SetTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @dataProvider invalidEntryProvider
-     */
+    /** @dataProvider invalidEntryProvider */
     public function testSetChangesWithChangedStructure($old, $new, $class)
     {
         $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));

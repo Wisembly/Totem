@@ -14,16 +14,16 @@ namespace test\Totem\Snapshot;
 use \stdClass,
     \ReflectionMethod;
 
-use \PHPUnit_Framework_TestCase;
+use Prophecy\Prophet,
+    Prophecy\PhpUnit\ProphecyTestCase;
 
-use Totem\Snapshot\ArraySnapshot;
+use Totem\AbstractSnapshot,
+    Totem\Snapshot\ArraySnapshot;
 
-class ArraySnapshotTest extends PHPUnit_Framework_TestCase
+class ArraySnapshotTest extends ProphecyTestCase
 {
-    /**
-     * @dataProvider providerCompare
-     */
-    public function testCompare($compare, $expect)
+    /** @dataProvider providerCompare */
+    public function testCompare(AbstractSnapshot $compare, $expect)
     {
         $snapshot = new ArraySnapshot([]);
         $this->assertSame($expect, $snapshot->isComparable($compare));
@@ -31,17 +31,15 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
 
     public function providerCompare()
     {
-        $snapshot = $this->getMockBuilder('Totem\\AbstractSnapshot')
-                         ->disableOriginalConstructor()
-                         ->getMock();
+        $prophet  = new Prophet;
+        $snapshot = $prophet->prophesize('Totem\\AbstractSnapshot')
+                            ->reveal();
 
         return [[new ArraySnapshot([]), true],
                 [$snapshot, false]];
     }
 
-    /**
-     * @dataProvider deepProvider
-     */
+    /** @dataProvider deepProvider */
     public function testDeepConstructor($value)
     {
         new ArraySnapshot(['foo' => $value]);

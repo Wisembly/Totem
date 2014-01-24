@@ -14,16 +14,16 @@ namespace test\Totem\Snapshot;
 use \stdClass,
     \ReflectionMethod;
 
-use \PHPUnit_Framework_TestCase;
+use Prophecy\Prophet,
+    Prophecy\PhpUnit\ProphecyTestCase;
 
-use Totem\Snapshot\ObjectSnapshot;
+use Totem\AbstractSnapshot,
+    Totem\Snapshot\ObjectSnapshot;
 
-class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
+class ObjectSnapshotTest extends ProphecyTestCase
 {
-    /**
-     * @dataProvider providerCompare
-     */
-    public function testCompare($object, $compare, $expect)
+    /** @dataProvider providerCompare */
+    public function testCompare($object, AbstractSnapshot $compare, $expect)
     {
         $snapshot = new ObjectSnapshot($object);
         $this->assertSame($expect, $snapshot->isComparable($compare));
@@ -31,28 +31,22 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 
     public function providerCompare()
     {
-        $object = new stdClass;
-
-        $snapshot = $this->getMockBuilder('Totem\\AbstractSnapshot')
-                         ->disableOriginalConstructor()
-                         ->getMock();
+        $object   = new stdClass;
+        $prophet  = new Prophet;
+        $snapshot = $prophet->prophesize('Totem\\AbstractSnapshot')->reveal();
 
         return [[$object, new ObjectSnapshot($object), true],
                 [$object, new ObjectSnapshot(clone $object), false],
                 [$object, $snapshot, false]];
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
+    /** @expectedException InvalidArgumentException */
     public function testConstructWithoutObject()
     {
         new ObjectSnapshot([]);
     }
 
-    /**
-     * @dataProvider deepProvider
-     */
+    /** @dataProvider deepProvider */
     public function testDeepConstructor($value)
     {
         new ObjectSnapshot((object) ['foo' => $value]);
