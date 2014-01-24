@@ -11,26 +11,24 @@
 
 namespace test\Totem;
 
-use \PHPUnit_Framework_TestCase;
+use Prophecy\PhpUnit\ProphecyTestCase;
 
-class AbstractChangeTest extends PHPUnit_Framework_TestCase
+class AbstractChangeTest extends ProphecyTestCase
 {
-    /** @var Totem\AbstractChange */
-    private $mock;
-
-    public function setUp()
-    {
-        $this->mock = $this->getMockForAbstractClass('Totem\\AbstractChange', ['old', 'new']);
-    }
-
     public function testOld()
     {
-        $this->assertSame('old', $this->mock->getOld());
+        $mock = $this->prophesize('Totem\\AbstractChange');
+        $mock->getOld()->willReturn('old');
+
+        $this->assertSame('old', $mock->reveal()->getOld());
     }
 
     public function testNew()
     {
-        $this->assertSame('new', $this->mock->getNew());
+        $mock = $this->prophesize('Totem\\AbstractChange');
+        $mock->getNew()->willReturn('new');
+
+        $this->assertSame('new', $mock->reveal()->getNew());
     }
 }
 
