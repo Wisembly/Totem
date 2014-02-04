@@ -194,8 +194,6 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
             case $values['old'] !== $values['new']:
                 return new Modification($values['old'], $values['new']);
         }
-
-        return null;
     }
 
     /**
