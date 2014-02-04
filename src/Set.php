@@ -132,59 +132,69 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
      * @param AbstractSnapshot $new New snapshot
      *
      * @internal
-     * @throws InvalidArgumentException If the two snapshots does not have the same data keys
      */
     private function compute(AbstractSnapshot $old, AbstractSnapshot $new)
     {
         $this->changes = [];
 
-        foreach ($old->getDataKeys() as $key) {
-            if (!in_array($key, $new->getDataKeys())) {
-                $this->changes[$key] = new Removal($old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key]);
-                continue;
-            }
+        foreach (array_replace($old->getDataKeys(), $new->getDataKeys()) as $key) {
+            $result = $this->computeEntry($old, $new, $key);
 
-            $current = ['old' => $old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key],
-                        'new' => $new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]];
-
-            switch (true) {
-                // different types
-                case gettype($old[$key]) !== gettype($new[$key]):
-                    $this->changes[$key] = new Modification($current['old'], $current['new']);
-                    continue;
-
-                // known type : do a deep comparison
-                case $old[$key] instanceof AbstractSnapshot:
-                    if (!$new[$key] instanceof AbstractSnapshot) {
-                        $this->changes[$key] = new Modification($current['old'], $current['new']);
-                        continue;
-                    }
-
-                    if (!$old[$key]->isComparable($new[$key])) {
-                        $this->changes[$key] = new Modification($current['old'], $current['new']);
-                        continue;
-                    }
-
-                    $set = new static($old[$key], $new[$key]);
-
-                    if (0 < count($set)) {
-                        $this->changes[$key] = $set;
-                    }
-
-                    continue;
-
-                // unknown type : compare raw data
-                default:
-                    if ($current['old'] !== $current['new']) {
-                        $this->changes[$key] = new Modification($current['old'], $current['new']);
-                    }
+            if (null !== $result) {
+                $this->changes[$key] = $result;
             }
         }
+    }
 
-        // added elements
-        foreach (array_diff($new->getDataKeys(), $old->getDataKeys()) as $key) {
-            $this->changes[$key] = new Addition($new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]);
+    /**
+     * Calculate the difference between two snapshots for a given key
+     *
+     * @param mixed $key Key to compare
+     *
+     * @return AbstractChange|null a change if a change was detected, null otherwise
+     * @internal
+     */
+    private function computeEntry(AbstractSnapshot $old, AbstractSnapshot $new, $key) {
+        if (!in_array($key, $old->getDataKeys())) {
+            return new Addition($new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]);
         }
+
+        if (!in_array($key, $new->getDataKeys())) {
+            return new Removal($old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key]);
+        }
+
+        $values = ['old' => $old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key],
+                   'new' => $new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]];
+
+        switch (true) {
+            // type verification
+            case gettype($old[$key]) !== gettype($new[$key]):
+                return new Modification($values['old'], $values['new']);
+
+            // could we compare two snapshots ?
+            case $old[$key] instanceof AbstractSnapshot:
+                if (!$new[$key] instanceof AbstractSnapshot) {
+                    return new Modification($values['old'], $values['new']);
+                }
+
+                if (!$old[$key]->isComparable($new[$key])) {
+                    return new Modification($values['old'], $values['new']);
+                }
+
+                $set = new static($old[$key], $new[$key]);
+
+                if (0 < count($set)) {
+                    return $set;
+                }
+
+            return null;
+
+            // unknown type : compare raw data
+            case $values['old'] !== $values['new']:
+                return new Modification($values['old'], $values['new']);
+        }
+
+        return null;
     }
 }
 
