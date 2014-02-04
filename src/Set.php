@@ -154,17 +154,18 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
      * @return AbstractChange|null a change if a change was detected, null otherwise
      * @internal
      */
-    private function computeEntry(AbstractSnapshot $old, AbstractSnapshot $new, $key) {
+    private function computeEntry(AbstractSnapshot $old, AbstractSnapshot $new, $key)
+    {
         if (!in_array($key, $old->getDataKeys())) {
-            return new Addition($new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]);
+            return new Addition($this->getRawData($new[$key]));
         }
 
         if (!in_array($key, $new->getDataKeys())) {
-            return new Removal($old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key]);
+            return new Removal($this->getRawData($old[$key]));
         }
 
-        $values = ['old' => $old[$key] instanceof AbstractSnapshot ? $old[$key]->getRawData() : $old[$key],
-                   'new' => $new[$key] instanceof AbstractSnapshot ? $new[$key]->getRawData() : $new[$key]];
+        $values = ['old' => $this->getRawData($old[$key]),
+                   'new' => $this->getRawData($new[$key])];
 
         switch (true) {
             // type verification
@@ -187,7 +188,7 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
                     return $set;
                 }
 
-            return null;
+                return null;
 
             // unknown type : compare raw data
             case $values['old'] !== $values['new']:
@@ -195,6 +196,21 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
         }
 
         return null;
+    }
+
+    /**
+     * Extracts the raw data for a given value
+     *
+     * @param mixed $value Value to extract
+     * @return mixed value extracted
+     */
+    private function getRawData($value)
+    {
+        if ($value instanceof AbstractSnapshot) {
+            return $value->getRawData();
+        }
+
+        return $value;
     }
 }
 
