@@ -9,34 +9,45 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace test\Totem\Snapshot;
+namespace Totem\Snapshot;
 
 use \stdClass,
     \ReflectionMethod;
 
 use \PHPUnit_Framework_TestCase;
 
-use Totem\Snapshot\ArraySnapshot;
+use Totem\Snapshot\ObjectSnapshot;
 
-class ArraySnapshotTest extends PHPUnit_Framework_TestCase
+class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider providerCompare
      */
-    public function testCompare($compare, $expect)
+    public function testCompare($object, $compare, $expect)
     {
-        $snapshot = new ArraySnapshot([]);
+        $snapshot = new ObjectSnapshot($object);
         $this->assertSame($expect, $snapshot->isComparable($compare));
     }
 
     public function providerCompare()
     {
+        $object = new stdClass;
+
         $snapshot = $this->getMockBuilder('Totem\\AbstractSnapshot')
                          ->disableOriginalConstructor()
                          ->getMock();
 
-        return [[new ArraySnapshot([]), true],
-                [$snapshot, false]];
+        return [[$object, new ObjectSnapshot($object), true],
+                [$object, new ObjectSnapshot(clone $object), false],
+                [$object, $snapshot, false]];
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testConstructWithoutObject()
+    {
+        new ObjectSnapshot([]);
     }
 
     /**
@@ -44,7 +55,7 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testDeepConstructor($value)
     {
-        new ArraySnapshot(['foo' => $value]);
+        new ObjectSnapshot((object) ['foo' => $value]);
     }
 
     public function deepProvider()

@@ -9,27 +9,28 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace test\Totem\ChangeSet;
+namespace Totem;
 
-use Totem\Change\Addition;
+use \PHPUnit_Framework_TestCase;
 
-class AdditionTest extends \PHPUnit_Framework_TestCase
+class AbstractChangeTest extends PHPUnit_Framework_TestCase
 {
-    private $change;
+    /** @var Totem\AbstractChange */
+    private $mock;
 
     public function setUp()
     {
-        $this->change = new Addition('new');
+        $this->mock = $this->getMockForAbstractClass('Totem\\AbstractChange', ['old', 'new']);
     }
 
     public function testOld()
     {
-        $this->assertNull($this->change->getOld());
+        $this->assertSame('old', $this->mock->getOld());
     }
 
     public function testNew()
     {
-        $this->assertSame('new', $this->change->getNew());
+        $this->assertSame('new', $this->mock->getNew());
     }
 }
 

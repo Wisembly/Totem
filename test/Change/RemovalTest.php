@@ -9,17 +9,17 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace test\Totem\ChangeSet;
+namespace Totem\ChangeSet;
 
-use Totem\Change\Modification;
+use Totem\Change\Removal;
 
-class ModificationTest extends \PHPUnit_Framework_TestCase
+class RemovalTest extends \PHPUnit_Framework_TestCase
 {
     private $change;
 
     public function setUp()
     {
-        $this->change = new Modification('old', 'new');
+        $this->change = new Removal('old');
     }
 
     public function testOld()
@@ -29,7 +29,7 @@ class ModificationTest extends \PHPUnit_Framework_TestCase
 
     public function testNew()
     {
-        $this->assertSame('new', $this->change->getNew());
+        $this->assertNull($this->change->getNew());
     }
 }
 

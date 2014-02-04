@@ -9,7 +9,7 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace test\Totem;
+namespace Totem;
 
 use \ReflectionMethod;
 
