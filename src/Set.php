@@ -18,16 +18,13 @@ use \Countable,
     \IteratorAggregate,
 
     \OutOfBoundsException,
-    \BadMethodCallException,
-    \InvalidArgumentException;
+    \BadMethodCallException;
 
 use Totem\Change\Removal,
     Totem\Change\Addition,
     Totem\Change\Modification,
 
-    Totem\AbstractSnapshot,
-    Totem\Snapshot\ArraySnapshot,
-    Totem\Snapshot\ObjectSnapshot;
+    Totem\AbstractSnapshot;
 
 /**
  * Represents a changeset

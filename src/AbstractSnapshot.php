@@ -91,7 +91,9 @@ abstract class AbstractSnapshot implements ArrayAccess
      *
      * @codeCoverageIgnore
      */
-    final private function __clone() {}
+    final private function __clone()
+    {
+    }
 
     /** {@inheritDoc} */
     final public function offsetExists($offset)
