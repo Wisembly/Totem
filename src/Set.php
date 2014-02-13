@@ -11,14 +11,14 @@
 
 namespace Totem;
 
-use \Countable,
-    \ArrayAccess,
+use Countable,
+    ArrayAccess,
 
-    \ArrayIterator,
-    \IteratorAggregate,
+    ArrayIterator,
+    IteratorAggregate,
 
-    \OutOfBoundsException,
-    \BadMethodCallException;
+    OutOfBoundsException,
+    BadMethodCallException;
 
 use Totem\Change\Removal,
     Totem\Change\Addition,
@@ -153,11 +153,11 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
      */
     private function computeEntry(AbstractSnapshot $old, AbstractSnapshot $new, $key)
     {
-        if (!in_array($key, $old->getDataKeys())) {
+        if (!isset($old[$key])) {
             return new Addition($this->getRawData($new[$key]));
         }
 
-        if (!in_array($key, $new->getDataKeys())) {
+        if (!isset($new[$key])) {
             return new Removal($this->getRawData($old[$key]));
         }
 

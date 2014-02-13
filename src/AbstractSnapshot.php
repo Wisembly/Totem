@@ -11,10 +11,10 @@
 
 namespace Totem;
 
-use \ArrayAccess;
+use ArrayAccess;
 
-use \BadMethodCallException,
-    \InvalidArgumentException;
+use BadMethodCallException,
+    InvalidArgumentException;
 
 use Totem\Exception\IncomparableDataException;
 
@@ -98,7 +98,7 @@ abstract class AbstractSnapshot implements ArrayAccess
     /** {@inheritDoc} */
     final public function offsetExists($offset)
     {
-        return isset($this->getComparableData()[$offset]);
+        return in_array($offset, $this->getDataKeys());
     }
 
     /** {@inheritDoc} */
