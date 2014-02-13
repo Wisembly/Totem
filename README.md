@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/taluu/totem.png?label=ready)](https://waffle.io/taluu/totem)
 Totem
 =====
 [![Build Status](https://travis-ci.org/Taluu/Totem.png?branch=develop)](https://travis-ci.org/Taluu/Totem)
