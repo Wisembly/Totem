@@ -1,12 +1,15 @@
 Totem
 =====
+[![License](https://poser.pugx.org/taluu/totem/license.png)](https://packagist.org/packages/taluu/totem)
 [![Build Status](https://travis-ci.org/Taluu/Totem.png?branch=develop)](https://travis-ci.org/Taluu/Totem)
 [![Latest Stable Version](https://poser.pugx.org/taluu/totem/v/stable.png)](https://packagist.org/packages/taluu/totem)
+[![Latest Unstable Version](https://poser.pugx.org/taluu/totem/v/unstable.png)](https://packagist.org/packages/taluu/totem)
 [![Total Downloads](https://poser.pugx.org/taluu/totem/downloads.png)](https://packagist.org/packages/taluu/totem)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Taluu/Totem/badges/quality-score.png?s=b71f67e353a379e19b651697285ffed18d6f1554)](https://scrutinizer-ci.com/g/Taluu/Totem/)
 [![Code Coverage](https://scrutinizer-ci.com/g/Taluu/Totem/badges/coverage.png?s=526dc791403caf731f6abb78d713291c68cf8446)](https://scrutinizer-ci.com/g/Taluu/Totem/)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825/mini.png)](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825)
-
+[![Dependency Status](https://www.versioneye.com/php/taluu:totem/1.2.4/badge.png)](https://www.versioneye.com/php/taluu:totem/1.2.4)
+[![Stories in Ready](https://badge.waffle.io/taluu/totem.png?label=ready)](https://waffle.io/taluu/totem)
 
 ```
        \\\\////
