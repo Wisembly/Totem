@@ -12,5 +12,5 @@ script:
     - bin/phpunit --coverage-text --coverage-clover clover.xml
 
 after_script:
-    - bin/coveralls -v
+    - bin/coveralls
 
