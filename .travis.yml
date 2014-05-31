@@ -9,5 +9,8 @@ before_script:
     - composer install --prefer-source -o
 
 script:
-    - bin/phpunit --coverage-text
+    - bin/phpunit --coverage-text --coverage-clover clover.xml
+
+after_script:
+    - bin/coveralls -v
 

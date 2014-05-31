@@ -1,6 +1,13 @@
+# docs
+docs/.build
+docs/Makefile
+
+# coveralls
+clover.xml
+coveralls-upload.json
+
+# vendors stuff
 vendor
 composer.lock
 bin
-docs/.build
-docs/Makefile
 

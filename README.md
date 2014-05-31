@@ -9,7 +9,6 @@ Totem
 [![Code Coverage](https://scrutinizer-ci.com/g/Taluu/Totem/badges/coverage.png?s=526dc791403caf731f6abb78d713291c68cf8446)](https://scrutinizer-ci.com/g/Taluu/Totem/)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825/mini.png)](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825)
 [![Dependency Status](https://www.versioneye.com/php/taluu:totem/1.2.4/badge.png)](https://www.versioneye.com/php/taluu:totem/1.2.4)
-[![Stories in Ready](https://badge.waffle.io/taluu/totem.png?label=ready)](https://waffle.io/taluu/totem)
 
 ```
        \\\\////
