@@ -7,7 +7,6 @@ Totem
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Taluu/Totem/badges/quality-score.png?s=b71f67e353a379e19b651697285ffed18d6f1554)](https://scrutinizer-ci.com/g/Taluu/Totem/)
 [![Coverage Status](https://coveralls.io/repos/Taluu/Totem/badge.png?branch=master)](https://coveralls.io/r/Taluu/Totem?branch=master)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825/mini.png)](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825)
-[![Dependency Status](https://www.versioneye.com/php/taluu:totem/1.2.4/badge.png)](https://www.versioneye.com/php/taluu:totem/1.2.4)
 
 ```
        \\\\////
@@ -21,7 +20,7 @@ Totem
  / / / /|::::|\ \ \ \
 '-'-'-'-|::::|-'-'-'-'
        (((^^)))
-        >>><<< 
+        >>><<<
         ||||||   Snapshots currently natively supported :
         (o)(o)   - Object
         | /\ |   - Array
