@@ -14,7 +14,7 @@ Totem
         |.)(.|
         | || |
         \(__)/   Changeset calculator between two state of a data
-        |-..-|   Requires PHP 5.4 ; Compatible PHP 5.5
+        |-..-|   Requires PHP 5.4 ; Compatible PHP 5.5, PHP 5.6, and HHVM
         |o\/o|
    .----\    /----.
   / / / |~~~~| \ \ \
