@@ -37,14 +37,14 @@ class ObjectSnapshot extends AbstractSnapshot
     public function __construct($object)
     {
         if (!is_object($object)) {
-            throw new InvalidArgumentException('This is not an object');
+            throw new InvalidArgumentException(sprintf('Object expected, had "%s"', gettype($object)));
         }
 
         $this->raw = $object;
         $this->oid = spl_object_hash($object);
         $refl      = new ReflectionObject($object);
 
-        if ($refl->isCloneable()) {
+        if (method_exists('\\ReflectionObject', 'isCloneable') && $refl->isCloneable()) {
             $this->raw = clone $object;
         }
 
