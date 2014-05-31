@@ -36,12 +36,12 @@ abstract class AbstractSnapshot implements ArrayAccess
     /**
      * Calculate the diff between two snapshots
      *
-     * @param self $snapshot Snapshot to compare this one to
+     * @param AbstractSnapshot $snapshot Snapshot to compare this one to
      *
      * @return Set Changeset between the two snapshots
      * @throws IncomparableDataException If the two snapshots are not comparable
      */
-    public function diff(self $snapshot)
+    public function diff(AbstractSnapshot $snapshot)
     {
         if (!$this->isComparable($snapshot)) {
             throw new IncomparableDataException;
@@ -130,11 +130,11 @@ abstract class AbstractSnapshot implements ArrayAccess
     /**
      * Check if the two snapshots are comparable
      *
-     * @param self $snapshot Snapshot to be compared with
+     * @param AbstractSnapshot $snapshot Snapshot to be compared with
      *
      * @return boolean true if the two snapshots can be processed in a diff, false otherwise
      */
-    public function isComparable(self $snapshot)
+    public function isComparable(AbstractSnapshot $snapshot)
     {
         if (!$snapshot instanceof static) {
             return false;
