@@ -20,7 +20,7 @@ Totem
  / / / /|::::|\ \ \ \
 '-'-'-'-|::::|-'-'-'-'
        (((^^)))
-        >>><<<
+        >>><<< 
         ||||||   Snapshots currently natively supported :
         (o)(o)   - Object
         | /\ |   - Array
@@ -56,7 +56,7 @@ You have multiple ways to install Totem. If you are unsure what to do, go with
 
       {
         "require": {
-          "taluu/totem": "~1.2.0"
+          "taluu/totem": "~1.2"
         }
       }
     ```
