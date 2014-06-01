@@ -37,9 +37,13 @@ class Set extends AbstractChange implements SetInterface, ArrayAccess, Countable
 {
     protected $changes = null;
 
-    public function __construct()
+    public function __construct(AbstractSnapshot $old = null, AbstractSnapshot $new = null)
     {
-        parent::__construct(null, null);
+        parent::__construct($old, $new);
+
+        if (null !== $old && null !== $new) {
+            $this->compute($old, $new);
+        }
     }
 
     /**
