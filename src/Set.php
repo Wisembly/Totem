@@ -34,14 +34,12 @@ use Totem\Change\Removal,
  * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Set extends AbstractChange implements SetInterface, ArrayAccess, Countable, IteratorAggregate
+class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
 {
     protected $changes = null;
 
     public function __construct(AbstractSnapshot $old = null, AbstractSnapshot $new = null)
     {
-        parent::__construct($old, $new);
-
         if (null !== $old && null !== $new) {
             $this->compute($old, $new);
         }
