@@ -26,7 +26,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetChangesWithChangedStructure($old, $new, $class)
     {
-        $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
+        $set = new Set;
+        $set->compute(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
         $this->assertInstanceOf('Totem\\Change\\' . $class, $set->getChange('1'));
     }
@@ -42,7 +43,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $old = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubar']]);
         $new = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubaz']]);
 
-        $set = new Set($old, $new);
+        $set = new Set;
+        $set->compute($old, $new);
 
         $this->assertFalse($set->hasChanged('foo'));
         $this->assertFalse(isset($set['foo']));
@@ -57,7 +59,9 @@ class SetTest extends \PHPUnit_Framework_TestCase
     {
         $old = new Snapshot(['data' => ['foo' => 'bar']]);
 
-        $set = new Set($old, $old);
+        $set = new Set;
+        $set->compute($old, $old);
+
         $set->getChange('foo');
     }
 
@@ -88,7 +92,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $new['kludge'] = 42;
         $new['xyzzy']  = (object) [];
 
-        $set = new Set(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
+        $set = new Set;
+        $set->compute(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
         $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('fuqux'));
         $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('foo'));
@@ -102,18 +107,10 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     public function testIterator()
     {
-        $set = new Set(new Snapshot(['data' => ['foo']]), new Snapshot(['data' => ['bar']]));
+        $set = new Set;
+        $set->compute(new Snapshot(['data' => ['foo']]), new Snapshot(['data' => ['bar']]));
 
         $this->assertInstanceOf('ArrayIterator', $set->getIterator());
-    }
-
-    public function testGetters()
-    {
-        $old = new Snapshot(['data' => ['foo'], 'raw' => 'foo']);
-        $set = new Set($old, $old);
-
-        $this->assertSame('foo', $set->getOld());
-        $this->assertSame('foo', $set->getNew());
     }
 
     /**
@@ -121,8 +118,9 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testForbidenSetter()
     {
+        $set = new Set;
         $old = new Snapshot;
-        $set = new Set($old, $old);
+        $set->compute($old, $old);
 
         $set[] = 'baz';
     }
@@ -132,11 +130,11 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testForbidenUnsetter()
     {
+        $set = new Set;
         $old = new Snapshot;
-        $set = new Set($old, $old);
+        $set->compute($old, $old);
 
         unset($set[0]);
     }
-
 }
 

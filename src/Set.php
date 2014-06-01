@@ -37,11 +37,9 @@ class Set extends AbstractChange implements SetInterface, ArrayAccess, Countable
 {
     protected $changes = null;
 
-    public function __construct(AbstractSnapshot $old, AbstractSnapshot $new)
+    public function __construct()
     {
-        parent::__construct($old->getRawData(), $new->getRawData());
-
-        $this->compute($old, $new);
+        parent::__construct(null, null);
     }
 
     /**
@@ -61,9 +59,14 @@ class Set extends AbstractChange implements SetInterface, ArrayAccess, Countable
     /**
      * {@inheritDoc}
      *
+     * @throws RuntimeException If the changeset was not computed yet
      */
     public function hasChanged($property)
     {
+        if (null === $this->changes) {
+            throw new RuntimeException('The changeset was not computed yet !');
+        }
+
         return isset($this->changes[$property]);
     }
 
@@ -99,21 +102,41 @@ class Set extends AbstractChange implements SetInterface, ArrayAccess, Countable
         throw new BadMethodCallException('You cannot alter a changeset once it has been calculated');
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws RuntimeException If the changeset was not computed yet
+     */
     public function count()
     {
+        if (null === $this->changes) {
+            throw new RuntimeException('The changeset was not computed yet !');
+        }
+
         return count($this->changes);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws RuntimeException If the changeset was not computed yet
+     */
     public function getIterator()
     {
+        if (null === $this->changes) {
+            throw new RuntimeException('The changeset was not computed yet !');
+        }
+
         return new ArrayIterator($this->changes);
     }
 
     /** {@inheritDoc} */
     public function compute(AbstractSnapshot $old, AbstractSnapshot $new)
     {
+        if (null !== $this->changes) {
+            return;
+        }
+
         $this->changes = [];
 
         foreach (array_replace($old->getDataKeys(), $new->getDataKeys()) as $key) {
@@ -161,7 +184,8 @@ class Set extends AbstractChange implements SetInterface, ArrayAccess, Countable
                     return new Modification($values['old'], $values['new']);
                 }
 
-                $set = new static($old[$key], $new[$key]);
+                $set = new static;
+                $set->compute($old[$key], $new[$key]);
 
                 if (0 < count($set)) {
                     return $set;
