@@ -17,6 +17,7 @@ use Countable,
     ArrayIterator,
     IteratorAggregate,
 
+    RuntimeException,
     OutOfBoundsException,
     BadMethodCallException;
 

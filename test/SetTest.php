@@ -136,5 +136,50 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
         unset($set[0]);
     }
+
+    /**
+     * @expectedException         RuntimeException
+     * @expectedExceptionMessage  The changeset was not computed yet !
+     */
+    public function testHasChangedNotComputedShouldThrowException()
+    {
+        $set = new Set;
+        $set->hasChanged('foo');
+    }
+
+    /**
+     * @expectedException         RuntimeException
+     * @expectedExceptionMessage  The changeset was not computed yet !
+     */
+    public function testNotComputedCountShouldThrowException()
+    {
+        $set = new Set;
+        count($set);
+    }
+
+    /**
+     * @expectedException         RuntimeException
+     * @expectedExceptionMessage  The changeset was not computed yet !
+     */
+    public function testNotComputedIteratorShouldThrowException()
+    {
+        $set = new Set;
+        $set->getIterator();
+    }
+
+    public function testAlreadyComputedSetShouldNotRecompute()
+    {
+        $old = new Snapshot(['data' => ['foo']]);
+        $new = new Snapshot(['data' => ['bar']]);
+
+        $set = new Set($old, $new); // implicitly compute the set in the constructor
+
+        $this->assertCount(1, $set);
+        $this->assertTrue($set->hasChanged(0));
+        $this->assertEquals('foo', $set->getChange(0)->getOld());
+        $this->assertEquals('bar', $set->getChange(0)->getNew());
+
+        $set->compute($old, $new);
+    }
 }
 

@@ -91,5 +91,21 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Totem\\Set', $snapshot->diff($snapshot));
     }
+
+    public function testCorrectSetClass()
+    {
+        $snapshot = new Snapshot(['data' => []]);
+        $snapshot->setSetClass('Totem\\Set');
+    }
+
+    /**
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage A Set Class should be instantiable and implement Totem\SetInterface
+     */
+    public function testWrongSetClass()
+    {
+        $snapshot = new Snapshot(['data' => []]);
+        $snapshot->setSetClass('stdclass');
+    }
 }
 
