@@ -17,6 +17,7 @@ use Countable,
     ArrayIterator,
     IteratorAggregate,
 
+    RuntimeException,
     OutOfBoundsException,
     BadMethodCallException;
 
@@ -24,6 +25,7 @@ use Totem\Change\Removal,
     Totem\Change\Addition,
     Totem\Change\Modification,
 
+    Totem\SetInterface,
     Totem\AbstractSnapshot;
 
 /**
@@ -32,26 +34,21 @@ use Totem\Change\Removal,
  * @author Rémy Gazelot <rgazelot@gmail.com>
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggregate
+class Set extends AbstractChange implements SetInterface, ArrayAccess, Countable, IteratorAggregate
 {
     protected $changes = null;
 
-    public function __construct(AbstractSnapshot $old, AbstractSnapshot $new)
+    public function __construct(AbstractSnapshot $old = null, AbstractSnapshot $new = null)
     {
-        parent::__construct($old->getRawData(), $new->getRawData());
+        parent::__construct($old, $new);
 
-        $this->compute($old, $new);
+        if (null !== $old && null !== $new) {
+            $this->compute($old, $new);
+        }
     }
 
     /**
-     * Retrieve a property change
-     *
-     * @param string $property
-     *
-     * @return AbstractChange Set if it is a recursive change,
-     *                        Addition if something was added,
-     *                        Removal if something it was deleted, or
-     *                        Modification otherwise
+     * {@inheritDoc}
      *
      * @throws OutOfBoundsException The property doesn't exist or wasn't changed
      */
@@ -65,14 +62,16 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
     }
 
     /**
-     * Test if the given property has been changed
+     * {@inheritDoc}
      *
-     * @param string $property
-     *
-     * @return boolean
+     * @throws RuntimeException If the changeset was not computed yet
      */
     public function hasChanged($property)
     {
+        if (null === $this->changes) {
+            throw new RuntimeException('The changeset was not computed yet !');
+        }
+
         return isset($this->changes[$property]);
     }
 
@@ -108,30 +107,41 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
         throw new BadMethodCallException('You cannot alter a changeset once it has been calculated');
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws RuntimeException If the changeset was not computed yet
+     */
     public function count()
     {
+        if (null === $this->changes) {
+            throw new RuntimeException('The changeset was not computed yet !');
+        }
+
         return count($this->changes);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * @throws RuntimeException If the changeset was not computed yet
+     */
     public function getIterator()
     {
+        if (null === $this->changes) {
+            throw new RuntimeException('The changeset was not computed yet !');
+        }
+
         return new ArrayIterator($this->changes);
     }
 
-    /**
-     * Calculate the changeset between two snapshots
-     *
-     * The two snapshots must be of the same snapshot type
-     *
-     * @param AbstractSnapshot $old Old snapshot
-     * @param AbstractSnapshot $new New snapshot
-     *
-     * @internal
-     */
-    private function compute(AbstractSnapshot $old, AbstractSnapshot $new)
+    /** {@inheritDoc} */
+    public function compute(AbstractSnapshot $old, AbstractSnapshot $new)
     {
+        if (null !== $this->changes) {
+            return;
+        }
+
         $this->changes = [];
 
         foreach (array_replace($old->getDataKeys(), $new->getDataKeys()) as $key) {
@@ -179,7 +189,8 @@ class Set extends AbstractChange implements ArrayAccess, Countable, IteratorAggr
                     return new Modification($values['old'], $values['new']);
                 }
 
-                $set = new static($old[$key], $new[$key]);
+                $set = new static;
+                $set->compute($old[$key], $new[$key]);
 
                 if (0 < count($set)) {
                     return $set;

@@ -11,9 +11,10 @@
 
 namespace Totem;
 
-use ArrayAccess;
+use ArrayAccess,
+    ReflectionClass,
 
-use BadMethodCallException,
+    BadMethodCallException,
     InvalidArgumentException;
 
 use Totem\Exception\IncomparableDataException;
@@ -33,6 +34,20 @@ abstract class AbstractSnapshot implements ArrayAccess
     /** @var mixed raw data stored */
     protected $raw;
 
+    /** @var string Set class to use */
+    private $setClass = 'Totem\\Set';
+
+    public function setSetClass($class)
+    {
+        $reflection = new ReflectionClass($class);
+
+        if (!$reflection->isInstantiable() || !$reflection->implementsInterface('Totem\\SetInterface')) {
+            throw new InvalidArgumentException('A Set Class should be instantiable and implement Totem\\SetInterface');
+        }
+
+        $this->setClass = $class;
+    }
+
     /**
      * Calculate the diff between two snapshots
      *
@@ -47,7 +62,10 @@ abstract class AbstractSnapshot implements ArrayAccess
             throw new IncomparableDataException;
         }
 
-        return new Set($this, $snapshot);
+        $set = new $this->setClass;
+        $set->compute($this, $snapshot);
+
+        return $set;
     }
 
     /**
