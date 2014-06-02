@@ -4,7 +4,7 @@ Totem is a PHP 5.4 library helping you to calculate changes brought to you data.
 Sure, that does help much to know what it does... Let me clarify then.
 
 Let's say you have a simple array, which looks like this ::
-    
+
     ['foo' => 'bar',
      'baz' => ['fubar', 'fubaz']]
 
@@ -37,20 +37,26 @@ one after that modification), you may calculte the diff ::
     // modifications
     $set = $snapshot['before']->diff($snapshot['after']);
 
-You have then a ``Totem\Set`` object, in which, from its constructor, the
-changeset will be computed. It is in fact a sort of a container, in which will
-be stored all the modifications that happened since the "before" snapshot until
-the "after" snapshot. Each items of this snapshot is a ``Totem\ChangeInterface``,
-which is basically either a ``Totem\Set`` object if the key was an object or an
-array that was modified between the "before" changeset and the "after" changeset,
-or a ``Totem\Change`` object if your data was completely changed (if it is a
+You have then a ``Totem\Set`` object, which is already computed. It is in fact a
+sort of a container, in which will be stored all the modifications that happened
+since the "before" snapshot until the "after" snapshot. Each items of this 
+snapshot is either a ``Totem\Set`` object if the key was an object or an array
+that was modified between the "before" changeset and the "after" changeset, or a
+``Totem\AbstractChange`` object if your data was completely changed (if it is a
 whole different array, object, or whatever else -- string, integer, boolean, you
-name it))
+name it). This change can be represented in 3 states :
+
+- a ``Totem\Change\Addition`` if the key was **added** in the new state ; 
+- a ``Totem\Change\Modification`` if the key was **modified** ; 
+- a ``Totem\Change\Removal`` if the key was removed from the data
 
 Third and final step : manipulate your diff
 -------------------------------------------
-Once you have your ``Totem\ChangeInterface`` object, you may have access to the
-"old" value (what it was in the old snapshot), and the new value (what is is now) ::
+Once you have your ``Totem\Set`` object, you have an access to each key that was
+modified ; if it is another ``Totem\Set`` object, it means that a recursive
+changeset was created ; if it is only a ``Totem\AbstractChange``, you have
+access to the "old" value (what it was in the old snapshot), and the new value
+(what is is now) ::
 
     // let's consider you stored the result set in a ``$set`` variable
     if ($set->hasChanged('foo')) {
