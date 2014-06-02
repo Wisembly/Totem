@@ -1,7 +1,7 @@
 {
     "name": "taluu/totem",
     "license": "MIT",
-    "description": "Changeset calculator between data",
+    "description": "Changeset calculator between data states",
     "keywords": ["changeset"],
 
     "authors": [
@@ -10,19 +10,13 @@
             "email": "clavie.b@gmail.com",
             "homepage": "http://baptiste.xn--clavi-fsa.net/",
             "role": "Lead Developper"
-        },
-
-        {
-            "name": "Rémy Gazelot",
-            "email": "rgazelot@gmail.com"
         }
     ],
 
     "support": {
         "email": "clavie.b@gmail.com",
         "issues": "https://github.com/Taluu/Totem/issues",
-        "source": "https://github.com/Taluu/Totem",
-        "forum": "http://www.talus-works.net"
+        "source": "https://github.com/Taluu/Totem"
     },
 
     "autoload": {

@@ -56,7 +56,7 @@ You have multiple ways to install Totem. If you are unsure what to do, go with
 
       {
         "require": {
-          "taluu/totem": "~1.2"
+          "taluu/totem": "~1.3"
         }
       }
     ```
