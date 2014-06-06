@@ -1,5 +1,5 @@
 {
-    "name": "taluu/totem",
+    "name": "wisembly/totem",
     "license": "MIT",
     "description": "Changeset calculator between data states",
     "keywords": ["changeset"],
@@ -18,6 +18,10 @@
         "issues": "https://github.com/Taluu/Totem/issues",
         "source": "https://github.com/Taluu/Totem"
     },
+
+	"replace": {
+		"taluu/totem": "self.version"
+	},
 
     "autoload": {
         "psr-4": {
