@@ -16,6 +16,7 @@ use \stdClass;
 use \PHPUnit_Framework_TestCase;
 
 use Totem\Set,
+    Totem\AbstractSnapshot,
     Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot;
 
@@ -181,5 +182,28 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
         $set->compute($old, $new);
     }
-}
 
+    public function testComputeWithById()
+    {
+        $old = new ArraySnapshot([
+            ['hash' => 'aaa', 'name' => 'foo'],
+            ['hash' => 'bbb', 'name' => 'bar'],
+            ['hash' => 'ccc', 'name' => 'baz'],
+        ]);
+        $new = new ArraySnapshot([
+            ['hash' => 'aaa', 'name' => 'foo'],
+            ['hash' => 'ccc', 'name' => 'baz'],
+        ]);
+
+        $set = new Set;
+        $set->compute($old, $new, 'hash');
+
+        $this->assertEquals(1, $set->count());
+
+        foreach ($set as $change) {
+            $this->assertInstanceOf('Totem\\Change\\Removal', $change);
+            $this->assertEquals('bbb', $change->getOld()['hash']);
+            $this->assertNull($change->getNew());
+        }
+    }
+}

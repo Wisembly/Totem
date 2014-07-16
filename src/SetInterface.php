@@ -48,7 +48,8 @@ interface SetInterface
      *
      * @param AbstractSnapshot $old Old snapshot
      * @param AbstractSnapshot $new New snapshot
+     * @param mixed            $id  Compare the old and new entries by a given key
      */
-    public function compute(AbstractSnapshot $old, AbstractSnapshot $new);
+    public function compute(AbstractSnapshot $old, AbstractSnapshot $new, $id = null);
 }
 
