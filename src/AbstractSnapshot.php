@@ -52,18 +52,19 @@ abstract class AbstractSnapshot implements ArrayAccess
      * Calculate the diff between two snapshots
      *
      * @param AbstractSnapshot $snapshot Snapshot to compare this one to
+     * @param mixed            $id       Compare the old and new entries by a given key
      *
      * @return Set Changeset between the two snapshots
      * @throws IncomparableDataException If the two snapshots are not comparable
      */
-    public function diff(AbstractSnapshot $snapshot)
+    public function diff(AbstractSnapshot $snapshot, $id = null)
     {
         if (!$this->isComparable($snapshot)) {
             throw new IncomparableDataException;
         }
 
         $set = new $this->setClass;
-        $set->compute($this, $snapshot);
+        $set->compute($this, $snapshot, $id);
 
         return $set;
     }

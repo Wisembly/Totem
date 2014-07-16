@@ -134,7 +134,7 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
     }
 
     /** {@inheritDoc} */
-    public function compute(AbstractSnapshot $old, AbstractSnapshot $new)
+    public function compute(AbstractSnapshot $old, AbstractSnapshot $new, $id = null)
     {
         if (null !== $this->changes) {
             return;
@@ -142,12 +142,48 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
 
         $this->changes = [];
 
+        if (null !== $id) {
+            $this->computeEntryById($old, $new, $id);
+
+            return;
+        }
+
         foreach (array_replace($old->getDataKeys(), $new->getDataKeys()) as $key) {
             $result = $this->computeEntry($old, $new, $key);
 
             if (null !== $result) {
                 $this->changes[$key] = $result;
             }
+        }
+    }
+
+    /**
+     * Compare old and new snapshot by a given id
+     *
+     * @param   AbstractSnapshot  $old
+     * @param   AbstractSnapshot  $new
+     * @param   mixed             $id
+     */
+    private function computeEntryById(AbstractSnapshot $old, AbstractSnapshot $new, $id)
+    {
+        foreach ($old->getRawData() as $oldArray) {
+            foreach ($new->getRawData() as $newArray) {
+                if ($oldArray[$id] === $newArray[$id]) {
+                    continue 2;
+                }
+            }
+
+            $this->changes[] = new Removal($oldArray);
+        }
+
+        foreach ($new->getRawData() as $newArray) {
+            foreach ($new->getRawData() as $oldArray) {
+                if ($oldArray[$id] === $newArray[$id]) {
+                    continue 2;
+                }
+            }
+
+            $this->changes[] = new Addition($newArray);
         }
     }
 
