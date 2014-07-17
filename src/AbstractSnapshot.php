@@ -173,6 +173,11 @@ abstract class AbstractSnapshot implements ArrayAccess
         }
 
         foreach ($this->data as &$value) {
+            // If the value is already an instance of a snapshot, we do not need to check if we have to snapshot it
+            if ($value instanceof static) {
+                continue;
+            }
+
             switch (gettype($value)) {
                 case 'object':
                     $value = new Snapshot\ObjectSnapshot($value);
