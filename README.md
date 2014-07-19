@@ -24,7 +24,7 @@ Totem
         ||||||   Snapshots currently natively supported :
         (o)(o)   - Object
         | /\ |   - Array
-        (====)
+        (====)   - Collection
        _(_,__)
       (___\___)
 ```
