@@ -9,9 +9,7 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace Totem\ChangeSet;
-
-use Totem\Change\Modification;
+namespace Totem\Change;
 
 class ModificationTest extends \PHPUnit_Framework_TestCase
 {

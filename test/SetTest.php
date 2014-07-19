@@ -15,8 +15,7 @@ use \stdClass;
 
 use \PHPUnit_Framework_TestCase;
 
-use Totem\Set,
-    Totem\Snapshot\ArraySnapshot,
+use Totem\Snapshot\ArraySnapshot,
     Totem\Snapshot\ObjectSnapshot;
 
 class SetTest extends \PHPUnit_Framework_TestCase

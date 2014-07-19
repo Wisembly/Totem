@@ -11,9 +11,10 @@
 
 namespace Totem;
 
-use \ReflectionMethod;
+use ReflectionMethod,
+    ReflectionProperty;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit_Framework_TestCase;
 
 class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
 {
@@ -76,13 +77,36 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
      * @expectedException        InvalidArgumentException
      * @expectedExceptionMessage The computed data is not an array, "string" given
      */
-    public function testNormalizer()
+    public function testInvalidDataNormalizer()
     {
         $snapshot = new Snapshot(['data' => 'foo']);
 
         $refl = new ReflectionMethod('Totem\\AbstractSnapshot', 'normalize');
         $refl->setAccessible(true);
         $refl->invoke($snapshot);
+    }
+
+    /** @dataProvider normalizerProvider */
+    public function testNormalizer($data, $snapshotClass)
+    {
+        $snapshot = new Snapshot;
+
+        $property = new ReflectionProperty('Totem\\AbstractSnapshot', 'data');
+        $property->setAccessible(true);
+        $property->setValue($snapshot, [$data]);
+
+        $method = new ReflectionMethod('Totem\\AbstractSnapshot', 'normalize');
+        $method->setAccessible(true);
+        $method->invoke($snapshot);
+
+        $this->assertInstanceOf($snapshotClass, $property->getValue($snapshot)[0]);
+    }
+
+    public function normalizerProvider()
+    {
+        return [[new Snapshot, 'Totem\\Snapshot'],
+                [['foo' => 'bar'], 'Totem\\Snapshot\\ArraySnapshot'],
+                [(object) ['foo' => 'bar'], 'Totem\\Snapshot\\ObjectSnapshot']];
     }
 
     public function testDiff()

@@ -199,7 +199,11 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
             // unknown type : compare raw data
             case $values['old'] !== $values['new']:
                 return new Modification($values['old'], $values['new']);
+        // PHPUnit coverage wtf start
+        // @codeCoverageIgnoreStart
         }
+        // @codeCoverageIgnoreEnd
+        // PHPUnit coverage wtf end
     }
 
     /**

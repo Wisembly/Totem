@@ -11,12 +11,10 @@
 
 namespace Totem\Snapshot;
 
-use \stdClass,
-    \ReflectionMethod;
+use stdClass,
+    ReflectionMethod;
 
-use \PHPUnit_Framework_TestCase;
-
-use Totem\Snapshot\ArraySnapshot;
+use PHPUnit_Framework_TestCase;
 
 class ArraySnapshotTest extends PHPUnit_Framework_TestCase
 {

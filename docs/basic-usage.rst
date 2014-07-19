@@ -27,6 +27,14 @@ on the root type of your data. Currently, here are the built-in types :
 
 - ``Totem\Snapshot\ArraySnapshot``, if your root data is an array
 - ``Totem\Snapshot\ObjectSnapshot``, if your root data is an object.
+- ``Totem\Snapshot\CollectionSnapshot``, if your root data is a collection.
+
+.. warning::
+   The Collection Snapshot is not a recursive snapshot. It will snapshots its
+   arrays and objects, but not its collections. It will consider them as
+   arrays, as there is no easy way to determine what is a collection (except on
+   userland, like the root of the data), and what is the primary key of each
+   elements in said collection.
 
 Second Step : Calculate the diff between your two snapshots
 -----------------------------------------------------------
@@ -40,15 +48,17 @@ one after that modification), you may calculte the diff ::
 You have then a ``Totem\Set`` object, which is already computed. It is in fact a
 sort of a container, in which will be stored all the modifications that happened
 since the "before" snapshot until the "after" snapshot. Each items of this 
-snapshot is either a ``Totem\Set`` object if the key was an object or an array
-that was modified between the "before" changeset and the "after" changeset, or a
-``Totem\AbstractChange`` object if your data was completely changed (if it is a
-whole different array, object, or whatever else -- string, integer, boolean, you
-name it). This change can be represented in 3 states :
+set may have two forms :
 
-- a ``Totem\Change\Addition`` if the key was **added** in the new state ; 
-- a ``Totem\Change\Modification`` if the key was **modified** ; 
-- a ``Totem\Change\Removal`` if the key was removed from the data
+- a ``Totem\Set`` if the item was a snapshot material in the "before" snapshot
+  and in the "after" snapshot ;
+- a ``Totem\AbstractChange`` object if your data was completely changed (if it
+  is a whole different array, object, or whatever else -- string, integer, 
+  boolean, you name it). This change can be represented in 3 states :
+
+  - a ``Totem\Change\Addition`` if the key was **added** in the new state ; 
+  - a ``Totem\Change\Modification`` if the key was **modified** ; 
+  - a ``Totem\Change\Removal`` if the key was **removed** from the data
 
 Third and final step : manipulate your diff
 -------------------------------------------

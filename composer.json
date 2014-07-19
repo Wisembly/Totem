@@ -30,7 +30,8 @@
     },
 
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "symfony/property-access": "~2.5"
     },
 
     "require-dev": {
@@ -45,4 +46,3 @@
     "minimum-stability": "dev",
     "prefer-stable": true
 }
-
