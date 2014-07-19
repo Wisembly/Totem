@@ -11,8 +11,6 @@
 
 namespace Totem;
 
-use Totem\AbstractSnapshot;
-
 class Snapshot extends AbstractSnapshot
 {
     public function __construct(array $args = [])

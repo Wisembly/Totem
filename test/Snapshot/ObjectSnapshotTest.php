@@ -16,8 +16,6 @@ use \stdClass,
 
 use \PHPUnit_Framework_TestCase;
 
-use Totem\Snapshot\ObjectSnapshot;
-
 class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**

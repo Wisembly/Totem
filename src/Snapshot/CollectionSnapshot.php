@@ -13,6 +13,7 @@ namespace Totem\Snapshot;
 
 use Traversable,
     ArrayAccess,
+    ReflectionClass,
     InvalidArgumentException;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -57,7 +58,7 @@ class CollectionSnapshot extends AbstractSnapshot
         $this->raw  = $data;
 
         $snapshot = null;
-        $accessor = PropertyAccess::createPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessorBuilder()->enableExceptionOnInvalidIndex()->getPropertyAccessor();
 
         if (isset($options['snapshotClass'])) {
             if (!class_exists($options['snapshotClass'])) {
@@ -83,15 +84,21 @@ class CollectionSnapshot extends AbstractSnapshot
 
         foreach ($data as $key => $value)
         {
+            $primary = $pkey;
+
+            if (!is_object($value)) {
+                $primary = '[' . $primary . ']';
+            }
+
             if (!is_int($key)) {
                 throw new InvalidArgumentException('The given array / Traversable is not a collection as it contains non numeric keys');
             }
 
-            if (!$accessor->isReadable($value, $pkey)) {
+            if (!$accessor->isReadable($value, $primary)) {
                 throw new InvalidArgumentException(sprintf('The key "%s" is not defined or readable in one of the elements of the collection', $pkey));
             }
 
-            $this->data[$accessor->getValue($value, $pkey)] = $this->snapshot($value);
+            $this->data[$accessor->getValue($value, $primary)] = $this->snapshot($value, $snapshot);
         }
 
         parent::normalize();

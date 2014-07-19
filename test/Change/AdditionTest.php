@@ -9,9 +9,7 @@
  * @license   http://www.opensource.org/licenses/MIT-License MIT License
  */
 
-namespace Totem\ChangeSet;
-
-use Totem\Change\Addition;
+namespace Totem\Change;
 
 class AdditionTest extends \PHPUnit_Framework_TestCase
 {
