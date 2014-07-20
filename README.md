@@ -11,20 +11,20 @@ Totem
 ```
        \\\\////
         |.)(.|
-        | || |
-        \(__)/   Changeset calculator between two state of a data
-        |-..-|   Requires PHP 5.4 ; Compatible PHP 5.5, PHP 5.6, and HHVM
+        | || |   Changeset calculator between two state of a data
+        \(__)/   Requires PHP 5.4 ; Compatible PHP 5.5, PHP 5.6, and HHVM
+        |-..-|
         |o\/o|
    .----\    /----.
   / / / |~~~~| \ \ \
  / / / /|::::|\ \ \ \
 '-'-'-'-|::::|-'-'-'-'
        (((^^)))
-        >>><<< 
-        ||||||   Snapshots currently natively supported :
+        >>><<<   Snapshots currently natively supported :
+        ||||||   - Array
         (o)(o)   - Object
-        | /\ |   - Array
-        (====)   - Collection
+        | /\ |   - Collection
+        (====)
        _(_,__)
       (___\___)
 ```
@@ -50,13 +50,13 @@ You have multiple ways to install Totem. If you are unsure what to do, go with
 
 ### Via Composer
 1. Install composer in your project: `curl -s http://getcomposer.org/installer | php`
-2. Create a `composer.json` file in your project root:
+2. Create a `composer.json` file (or update it) in your project root:
 
     ```javascript
 
       {
         "require": {
-          "wisembly/totem": "~1.3"
+          "wisembly/totem": "~1.4"
         }
       }
     ```
@@ -68,13 +68,13 @@ Basic Usage
 ```php
 <?php
 
-use Totem\Snapshot\ObjectSnapshot;
+use Totem\Snapshot\ArraySnapshot;
 
-$object = (object) ['foo' => 'bar', 'baz' => 'qux'];
-$snapshot = new ObjectSnapshot($object); // Totem\Snapshot\ObjectSnapshot
+$array = ['foo' => 'bar', 'baz' => 'qux'];
+$snapshot = new ArraySnapshot($array); // Totem\Snapshot\ArraySnapshot
 
-$object->foo = 'fubar';
-$set = $snapshot->diff(new ObjectSnapshot($object)); // Totem\Set
+$array['foo'] = 'fubar';
+$set = $snapshot->diff(new ArraySnapshot($array)); // Totem\Set
 
 var_dump($set->hasChanged('foo'),
          $set->getChange('foo')->getOld(),
