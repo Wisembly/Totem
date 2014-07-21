@@ -31,29 +31,29 @@
         <h1>
 <a name="totem" class="anchor" href="#totem"><span class="octicon octicon-link"></span></a>Totem</h1>
 
-<p><a href="https://packagist.org/packages/taluu/totem"><img src="https://poser.pugx.org/taluu/totem/license.png" alt="License"></a>
-<a href="https://travis-ci.org/Taluu/Totem"><img src="https://travis-ci.org/Taluu/Totem.png?branch=develop" alt="Build Status"></a>
-<a href="https://packagist.org/packages/taluu/totem"><img src="https://poser.pugx.org/taluu/totem/v/stable.png" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/taluu/totem"><img src="https://poser.pugx.org/taluu/totem/downloads.png" alt="Total Downloads"></a>
+<p><a href="https://packagist.org/packages/wisembly/totem"><img src="https://poser.pugx.org/wisembly/totem/license.png" alt="License"></a>
+<a href="https://travis-ci.org/Wisembly/Totem"><img src="https://travis-ci.org/Wisembly/Totem.png?branch=master" alt="Build Status"></a>
+<a href="https://packagist.org/packages/wisembly/totem"><img src="https://poser.pugx.org/wisembly/totem/v/stable.png" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/wisembly/totem"><img src="https://poser.pugx.org/wisembly/totem/downloads.png" alt="Total Downloads"></a>
 <a href="https://scrutinizer-ci.com/g/Taluu/Totem/"><img src="https://scrutinizer-ci.com/g/Taluu/Totem/badges/quality-score.png?s=b71f67e353a379e19b651697285ffed18d6f1554" alt="Scrutinizer Quality Score"></a>
-<a href="https://coveralls.io/r/Taluu/Totem?branch=master"><img src="https://coveralls.io/repos/Taluu/Totem/badge.png?branch=master" alt="Coverage Status"></a>
+<a href="https://coveralls.io/r/Wisembly/Totem?branch=master"><img src="https://img.shields.io/coveralls/Wisembly/Totem.svg" alt="Coverage Status"></a>
 <a href="https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825"><img src="https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825/mini.png" alt="SensioLabsInsight"></a></p>
 
 <pre><code>       \\\\////
         |.)(.|
-        | || |
-        \(__)/   Changeset calculator between two state of a data
-        |-..-|   Requires PHP 5.4 ; Compatible PHP 5.5, PHP 5.6, and HHVM
+        | || |   Changeset calculator between two state of a data
+        \(__)/   Requires PHP 5.4 ; Compatible PHP 5.5, PHP 5.6, and HHVM
+        |-..-|
         |o\/o|
    .----\    /----.
   / / / |~~~~| \ \ \
  / / / /|::::|\ \ \ \
 '-'-'-'-|::::|-'-'-'-'
        (((^^)))
-        &gt;&gt;&gt;&lt;&lt;&lt; 
-        ||||||   Snapshots currently natively supported :
+        &gt;&gt;&gt;&lt;&lt;&lt;   Snapshots currently natively supported :
+        ||||||   - Array
         (o)(o)   - Object
-        | /\ |   - Array
+        | /\ |   - Collection
         (====)
        _(_,__)
       (___\___)
@@ -75,7 +75,7 @@ check up <a href="http://totem.readthedocs.org/en/latest/index.html">the compile
 <a name="archive-release" class="anchor" href="#archive-release"><span class="octicon octicon-link"></span></a>Archive Release</h3>
 
 <ol>
-<li>Download the most recent release from the <a href="https://github.com/Taluu/Totem/releases">release page</a>
+<li>Download the most recent release from the <a href="https://github.com/Wisembly/Totem/releases">release page</a>
 </li>
 <li>Unpack the archive</li>
 <li>Move the files somewhere in your project</li>
@@ -84,7 +84,7 @@ check up <a href="http://totem.readthedocs.org/en/latest/index.html">the compile
 
 <ol>
 <li>Install Git</li>
-<li><code>git clone git://github.com/Taluu/Totem.git</code></li>
+<li><code>git clone git://github.com/Wisembly/Totem.git</code></li>
 </ol><h3>
 <a name="via-composer" class="anchor" href="#via-composer"><span class="octicon octicon-link"></span></a>Via Composer</h3>
 
@@ -92,12 +92,12 @@ check up <a href="http://totem.readthedocs.org/en/latest/index.html">the compile
 <li>Install composer in your project: <code>curl -s http://getcomposer.org/installer | php</code>
 </li>
 <li>
-<p>Create a <code>composer.json</code> file in your project root:</p>
+<p>Create a <code>composer.json</code> file (or update it) in your project root:</p>
 
 <div class="highlight highlight-javascript"><pre>
   <span class="p">{</span>
     <span class="s2">"require"</span><span class="o">:</span> <span class="p">{</span>
-      <span class="s2">"taluu/totem"</span><span class="o">:</span> <span class="s2">"~1.3"</span>
+      <span class="s2">"wisembly/totem"</span><span class="o">:</span> <span class="s2">"~1.4"</span>
     <span class="p">}</span>
   <span class="p">}</span>
 </pre></div>
@@ -108,13 +108,13 @@ check up <a href="http://totem.readthedocs.org/en/latest/index.html">the compile
 
 <div class="highlight highlight-php"><pre><span class="o">&lt;?</span><span class="nx">php</span>
 
-<span class="k">use</span> <span class="nx">Totem\Snapshot\ObjectSnapshot</span><span class="p">;</span>
+<span class="k">use</span> <span class="nx">Totem\Snapshot\ArraySnapshot</span><span class="p">;</span>
 
-<span class="nv">$object</span> <span class="o">=</span> <span class="p">(</span><span class="nx">object</span><span class="p">)</span> <span class="p">[</span><span class="s1">'foo'</span> <span class="o">=&gt;</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="s1">'baz'</span> <span class="o">=&gt;</span> <span class="s1">'qux'</span><span class="p">];</span>
-<span class="nv">$snapshot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ObjectSnapshot</span><span class="p">(</span><span class="nv">$object</span><span class="p">);</span> <span class="c1">// Totem\Snapshot\ObjectSnapshot</span>
+<span class="nv">$array</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'foo'</span> <span class="o">=&gt;</span> <span class="s1">'bar'</span><span class="p">,</span> <span class="s1">'baz'</span> <span class="o">=&gt;</span> <span class="s1">'qux'</span><span class="p">];</span>
+<span class="nv">$snapshot</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ArraySnapshot</span><span class="p">(</span><span class="nv">$array</span><span class="p">);</span> <span class="c1">// Totem\Snapshot\ArraySnapshot</span>
 
-<span class="nv">$object</span><span class="o">-&gt;</span><span class="na">foo</span> <span class="o">=</span> <span class="s1">'fubar'</span><span class="p">;</span>
-<span class="nv">$set</span> <span class="o">=</span> <span class="nv">$snapshot</span><span class="o">-&gt;</span><span class="na">diff</span><span class="p">(</span><span class="k">new</span> <span class="nx">ObjectSnapshot</span><span class="p">(</span><span class="nv">$object</span><span class="p">));</span> <span class="c1">// Totem\Set</span>
+<span class="nv">$array</span><span class="p">[</span><span class="s1">'foo'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'fubar'</span><span class="p">;</span>
+<span class="nv">$set</span> <span class="o">=</span> <span class="nv">$snapshot</span><span class="o">-&gt;</span><span class="na">diff</span><span class="p">(</span><span class="k">new</span> <span class="nx">ArraySnapshot</span><span class="p">(</span><span class="nv">$array</span><span class="p">));</span> <span class="c1">// Totem\Set</span>
 
 <span class="nb">var_dump</span><span class="p">(</span><span class="nv">$set</span><span class="o">-&gt;</span><span class="na">hasChanged</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">),</span>
          <span class="nv">$set</span><span class="o">-&gt;</span><span class="na">getChange</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">getOld</span><span class="p">(),</span>
