@@ -34,6 +34,13 @@ use Totem\AbstractSnapshot;
 class CollectionSnapshot extends AbstractSnapshot
 {
     /**
+     * Collection of the new keys (extracted from the primary key) => old keys
+     *
+     * @var integer[]
+     */
+    private $link = [];
+
+    /**
      * Construct the snapshot
      *
      * The following options are taken into account :
@@ -97,7 +104,10 @@ class CollectionSnapshot extends AbstractSnapshot
                 throw new InvalidArgumentException(sprintf('The key "%s" is not defined or readable in one of the elements of the collection', $pkey));
             }
 
-            $this->data[$accessor->getValue($value, $primary)] = $this->snapshot($value, $snapshot);
+            $primary = $accessor->getValue($value, $primary);
+
+            $this->link[$primary] = $key;
+            $this->data[$primary] = $this->snapshot($value, $snapshot);
         }
 
         parent::normalize();
@@ -121,6 +131,22 @@ class CollectionSnapshot extends AbstractSnapshot
         }
 
         return new $class($value);
+    }
+
+    /**
+     * Returns the original key for the primary key $primary
+     *
+     * @param mixed $primary Primary key to search
+     *
+     * @return integer original key
+     * @throws InvalidArgumentException primary key not found
+     */
+    public function getOriginalKey($primary) {
+        if (!isset($this->link[$primary])) {
+            throw new InvalidArgumentException(sprintf('The primary key "%s" is not in the computed dataset', $primary));
+        }
+
+        return $this->link[$primary];
     }
 }
 

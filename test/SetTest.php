@@ -16,7 +16,8 @@ use \stdClass;
 use \PHPUnit_Framework_TestCase;
 
 use Totem\Snapshot\ArraySnapshot,
-    Totem\Snapshot\ObjectSnapshot;
+    Totem\Snapshot\ObjectSnapshot,
+    Totem\Snapshot\CollectionSnapshot;
 
 class SetTest extends \PHPUnit_Framework_TestCase
 {
@@ -179,6 +180,38 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $set->getChange(0)->getNew());
 
         $set->compute($old, $new);
+    }
+
+    public function testComputeCollections()
+    {
+        $old = $new = [['foo' => 'bar', 'baz' => 'fubar'], ['foo' => 'baz', 'baz' => 'fubar']];
+        $new[0]['baz'] = 'fubaz';
+
+        $old = new CollectionSnapshot($old, 'foo');
+        $new = new CollectionSnapshot($new, 'foo');
+
+        $set = new Set;
+        $set->compute($old, $new);
+
+        $this->assertContainsOnly('integer',array_keys(iterator_to_array($set)));
+    }
+
+    /** @dataProvider unaffectedSnapshotComputerProvider */
+    public function testUnaffectedCollections(AbstractSnapshot $origin, AbstractSnapshot $upstream)
+    {
+        $set = new Set;
+        $set->compute($origin, $upstream);
+
+        $this->assertNotContainsOnly('integer',array_keys(iterator_to_array($set)));
+    }
+
+    public function unaffectedSnapshotComputerProvider()
+    {
+        $old = ['foo' => 'bar', 'baz' => 'fubar'];
+
+        return [[new CollectionSnapshot([$old], 'foo'), new ArraySnapshot($old)],
+                [new ArraySnapshot($old), new CollectionSnapshot([$old], 'foo')],
+                [new ArraySnapshot($old), new ArraySnapshot(array_merge($old, ['baz' => 'fubaz']))]];
     }
 }
 
