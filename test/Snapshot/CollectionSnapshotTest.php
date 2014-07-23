@@ -96,5 +96,22 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
         return [[true],
                 [false]];
     }
+
+    /**
+     * @expectedException        InvalidArgumentException
+     * @expectedExceptionMessage The primary key "baz" is not in the computed dataset
+     */
+    public function testOriginalKeyNotFound()
+    {
+        $snapshot = new CollectionSnapshot([['foo' => 'bar']], 'foo');
+        $snapshot->getOriginalKey('baz');
+    }
+
+    public function testOriginalKey()
+    {
+        $snapshot = new CollectionSnapshot([['foo' => 'bar']], 'foo');
+
+        $this->assertSame(0, $snapshot->getOriginalKey('bar'));
+    }
 }
 
