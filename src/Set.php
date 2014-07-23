@@ -26,7 +26,8 @@ use Totem\Change\Removal,
     Totem\Change\Modification,
 
     Totem\SetInterface,
-    Totem\AbstractSnapshot;
+    Totem\AbstractSnapshot,
+    Totem\Snapshot\CollectionSnapshot;
 
 /**
  * Represents a changeset
@@ -148,6 +149,14 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
             if (null !== $result) {
                 $this->changes[$key] = $result;
             }
+        }
+
+        /*
+         * Collection tricky case : each changes should not be represented by
+         * its primary key, but by a numeric key. Because it is a collection, duh.
+         */
+        if ($old instanceof CollectionSnapshot && $new instanceof CollectionSnapshot) {
+            $this->changes = array_values($this->changes);
         }
     }
 
