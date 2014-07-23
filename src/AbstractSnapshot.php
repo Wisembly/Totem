@@ -181,10 +181,14 @@ abstract class AbstractSnapshot implements ArrayAccess
             switch (gettype($value)) {
                 case 'object':
                     $value = new Snapshot\ObjectSnapshot($value);
+                    $value->setClass = $this->setClass;
+
                     break;
 
                 case 'array':
                     $value = new Snapshot\ArraySnapshot($value);
+                    $value->setClass = $this->setClass;
+
                     break;
             }
         }

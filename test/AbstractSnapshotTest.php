@@ -87,24 +87,30 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
     }
 
     /** @dataProvider normalizerProvider */
-    public function testNormalizer($data, $snapshotClass)
+    public function testNormalizer($data, $snapshotClass, $setClass = null)
     {
         $snapshot = new Snapshot;
+        $setClass = $setClass ?: 'stdClass';
 
-        $property = new ReflectionProperty('Totem\\AbstractSnapshot', 'data');
-        $property->setAccessible(true);
-        $property->setValue($snapshot, [$data]);
+        $dataProperty = new ReflectionProperty('Totem\\AbstractSnapshot', 'data');
+        $dataProperty->setAccessible(true);
+        $dataProperty->setValue($snapshot, [$data]);
+
+        $setClassProperty = new ReflectionProperty('Totem\\AbstractSnapshot', 'setClass');
+        $setClassProperty->setAccessible(true);
+        $setClassProperty->setValue($snapshot, $setClass);
 
         $method = new ReflectionMethod('Totem\\AbstractSnapshot', 'normalize');
         $method->setAccessible(true);
         $method->invoke($snapshot);
 
-        $this->assertInstanceOf($snapshotClass, $property->getValue($snapshot)[0]);
+        $this->assertInstanceOf($snapshotClass, $dataProperty->getValue($snapshot)[0]);
+        $this->assertEquals($setClass, $setClassProperty->getValue($dataProperty->getValue($snapshot)[0]));
     }
 
     public function normalizerProvider()
     {
-        return [[new Snapshot, 'Totem\\Snapshot'],
+        return [[new Snapshot, 'Totem\\Snapshot', 'Totem\\Set'],
                 [['foo' => 'bar'], 'Totem\\Snapshot\\ArraySnapshot'],
                 [(object) ['foo' => 'bar'], 'Totem\\Snapshot\\ObjectSnapshot']];
     }
