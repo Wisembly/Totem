@@ -142,7 +142,7 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
 
         $this->changes = [];
 
-        foreach (array_replace($old->getDataKeys(), $new->getDataKeys()) as $key) {
+        foreach (array_unique(array_merge(array_keys($old->getComparableData()), array_keys($new->getComparableData()))) as $key) {
             $result = $this->computeEntry($old, $new, $key);
 
             if (null !== $result) {

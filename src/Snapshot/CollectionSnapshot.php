@@ -82,8 +82,7 @@ class CollectionSnapshot extends AbstractSnapshot
             throw new InvalidArgumentException(sprintf('An array or a Traversable was expected to take a snapshot of a collection, "%s" given', is_object($data) ? get_class($data) : gettype($data)));
         }
 
-        foreach ($data as $key => $value)
-        {
+        foreach ($data as $key => $value) {
             $primary = $pkey;
 
             if (!is_object($value)) {
