@@ -187,13 +187,13 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $old = $new = [['foo' => 'bar', 'baz' => 'fubar'], ['foo' => 'baz', 'baz' => 'fubar']];
         $new[0]['baz'] = 'fubaz';
 
-        $old = new CollectionSnapshot($old, 'foo');
-        $new = new CollectionSnapshot($new, 'foo');
+        $old = new CollectionSnapshot($old, '[foo]');
+        $new = new CollectionSnapshot($new, '[foo]');
 
         $set = new Set;
         $set->compute($old, $new);
 
-        $this->assertContainsOnly('integer',array_keys(iterator_to_array($set)));
+        $this->assertContainsOnly('integer', array_keys(iterator_to_array($set)));
     }
 
     /** @dataProvider unaffectedSnapshotComputerProvider */
@@ -209,8 +209,8 @@ class SetTest extends \PHPUnit_Framework_TestCase
     {
         $old = ['foo' => 'bar', 'baz' => 'fubar'];
 
-        return [[new CollectionSnapshot([$old], 'foo'), new ArraySnapshot($old)],
-                [new ArraySnapshot($old), new CollectionSnapshot([$old], 'foo')],
+        return [[new CollectionSnapshot([$old], '[foo]'), new ArraySnapshot($old)],
+                [new ArraySnapshot($old), new CollectionSnapshot([$old], '[foo]')],
                 [new ArraySnapshot($old), new ArraySnapshot(array_merge($old, ['baz' => 'fubaz']))]];
     }
 }
