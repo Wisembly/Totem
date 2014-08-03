@@ -82,7 +82,7 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
             $options['snapshotClass'] = 'Totem\\Snapshot';
         }
 
-        $snapshot = new CollectionSnapshot([['foo' => 'bar', 'baz' => 'fubar']], 'foo', $options);
+        $snapshot = new CollectionSnapshot([['foo' => 'bar', 'baz' => 'fubar']], '[foo]', $options);
 
         $refl = new ReflectionProperty('Totem\\AbstractSnapshot', 'data');
         $refl->setAccessible(true);
@@ -103,13 +103,13 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testOriginalKeyNotFound()
     {
-        $snapshot = new CollectionSnapshot([['foo' => 'bar']], 'foo');
+        $snapshot = new CollectionSnapshot([['foo' => 'bar']], '[foo]');
         $snapshot->getOriginalKey('baz');
     }
 
     public function testOriginalKey()
     {
-        $snapshot = new CollectionSnapshot([['foo' => 'bar']], 'foo');
+        $snapshot = new CollectionSnapshot([['foo' => 'bar']], '[foo]');
 
         $this->assertSame(0, $snapshot->getOriginalKey('bar'));
     }

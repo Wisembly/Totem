@@ -16,7 +16,8 @@ use Traversable,
     ReflectionClass,
     InvalidArgumentException;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPath,
+    Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Totem\AbstractSnapshot;
 
@@ -50,19 +51,21 @@ class CollectionSnapshot extends AbstractSnapshot
      *                   on the situation.
      *
      * @param mixed $data    Either an array or a traversable, data to take a snapshot of
-     * @param mixed $pkey    Key to use as a primary key
+     * @param mixed $primary Property path compatible value to use to get the primary key of each elements
      * @param array $options Array of options
      *
      * @throws InvalidArgumentException the $data is not an array or a Traversable
      * @throws InvalidArgumentException the $data is not an at least 2 dimensional array
      * @throws InvalidArgumentException the snapshotClass in the options is not loadable
      * @throws InvalidArgumentException the snapshotClass in the options is not a valid snapshot class
-     * @throws InvalidArgumentException one of the elements of the collection does not have a $pkey key
+     * @throws InvalidArgumentException one of the elements of the collection does not have a $primary key
      */
-    public function __construct($data, $pkey, array $options = [])
+    public function __construct($data, $primary, array $options = [])
     {
         $this->data = [];
         $this->raw  = $data;
+
+        $primary = new PropertyPath($primary);
 
         $snapshot = null;
         $accessor = PropertyAccess::createPropertyAccessorBuilder()->enableExceptionOnInvalidIndex()->getPropertyAccessor();
@@ -81,33 +84,23 @@ class CollectionSnapshot extends AbstractSnapshot
             $snapshot = $options['snapshotClass'];
         }
 
-        if ($data instanceof Traversable) {
-            $data = iterator_to_array($data);
-        }
-
-        if (!is_array($data)) {
+        if (!is_array($data) && !$data instanceof Traversable) {
             throw new InvalidArgumentException(sprintf('An array or a Traversable was expected to take a snapshot of a collection, "%s" given', is_object($data) ? get_class($data) : gettype($data)));
         }
 
         foreach ($data as $key => $value) {
-            $primary = $pkey;
-
-            if (!is_object($value)) {
-                $primary = '[' . $primary . ']';
-            }
-
             if (!is_int($key)) {
                 throw new InvalidArgumentException('The given array / Traversable is not a collection as it contains non numeric keys');
             }
 
             if (!$accessor->isReadable($value, $primary)) {
-                throw new InvalidArgumentException(sprintf('The key "%s" is not defined or readable in one of the elements of the collection', $pkey));
+                throw new InvalidArgumentException(sprintf('The key "%s" is not defined or readable in one of the elements of the collection', $primary));
             }
 
-            $primary = $accessor->getValue($value, $primary);
+            $primaryKey = $accessor->getValue($value, $primary);
 
-            $this->link[$primary] = $key;
-            $this->data[$primary] = $this->snapshot($value, $snapshot);
+            $this->link[$primaryKey] = $key;
+            $this->data[$primaryKey] = $this->snapshot($value, $snapshot);
         }
 
         parent::normalize();
