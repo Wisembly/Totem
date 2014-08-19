@@ -12,7 +12,6 @@
 namespace Totem\Snapshot;
 
 use Traversable,
-    ArrayAccess,
     ReflectionClass,
     InvalidArgumentException;
 
