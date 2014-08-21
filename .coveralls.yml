@@ -3,7 +3,7 @@
 #
 
 src_dir: src
-service_name: travis-ci
-coverage_clover: clover.xml
+service_name: shippable
+coverage_clover: shippable/clover.xml
 json_path: coveralls-upload.json
 

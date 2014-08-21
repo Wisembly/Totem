@@ -1,0 +1,29 @@
+language: php
+
+php:
+    - 5.4
+    - 5.5
+    - 5.6
+    - hhvm
+
+matrix:
+  allow_failures:
+      - php: hhvm
+
+git:
+    submodules: false
+
+before_script:
+    - mkdir -p shippable/codecoverage
+    - mkdir -p shippable/testresults
+    - composer self-update
+    - composer install --prefer-source -o
+
+script:
+    - bin/phpunit --log-junit "shippable/testresults/junit.xml" --coverage-clover "clover.xml" --coverage-xml "shippable/codecoverage" --coverage-text
+
+after_script:
+    - bin/coveralls
+
+notifications:
+    email: false
