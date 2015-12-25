@@ -58,9 +58,43 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 
     public function deepProvider()
     {
-        return [[(object) ['bar' => 'baz']],
-                [['bar' => 'baz']],
-                ['fubar']];
+        return [
+            'with a sub-object' => [(object) ['bar' => 'baz']],
+            'with a sub-array' => [['bar' => 'baz']],
+            'with a scalar' => ['fubar']
+        ];
+    }
+
+    public function testExportAllProperties()
+    {
+        $snapshot = new ObjectSnapshot(new Foo('foo', 'bar', 'baz'));
+        $data = $snapshot->getComparableData();
+
+        $this->assertCount(3, $data);
+
+        $this->assertArrayHasKey('foo', $data);
+        $this->assertArrayHasKey('bar', $data);
+        $this->assertArrayHasKey('baz', $data);
+
+        $this->assertSame('foo', $data['foo']);
+        $this->assertSame('bar', $data['bar']);
+        $this->assertSame('baz', $data['baz']);
     }
 }
+
+// todo in php7 : use anon class !
+class Foo
+{
+    public $foo;
+    protected $bar;
+    private $baz;
+
+    public function __construct($foo, $bar, $baz)
+    {
+        $this->foo = $foo;
+        $this->bar = $bar;
+        $this->baz = $baz;
+    }
+}
+
 
