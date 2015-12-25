@@ -6,13 +6,13 @@ Totem
 [![Total Downloads](https://poser.pugx.org/wisembly/totem/downloads.png)](https://packagist.org/packages/wisembly/totem)
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/Taluu/Totem/badges/quality-score.png?s=b71f67e353a379e19b651697285ffed18d6f1554)](https://scrutinizer-ci.com/g/Taluu/Totem/)
 [![Coverage Status](https://img.shields.io/coveralls/Wisembly/Totem.svg)](https://coveralls.io/r/Wisembly/Totem?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825/mini.png)](https://insight.sensiolabs.com/projects/5d97b609-b57c-467e-9a6e-3a39e08bd825)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/82271056-a3c2-4e0b-adff-8219fa198035/mini.png)](https://insight.sensiolabs.com/projects/82271056-a3c2-4e0b-adff-8219fa198035)
 
 ```
        \\\\////
         |.)(.|
         | || |   Changeset calculator between two state of a data
-        \(__)/   Requires PHP 5.4 ; Compatible PHP 5.5, PHP 5.6, and HHVM
+        \(__)/   Requires PHP 5.4 ; Compatible PHP 5.5, PHP 5.6, PHP 7 and HHVM
         |-..-|
         |o\/o|
    .----\    /----.
@@ -56,7 +56,7 @@ You have multiple ways to install Totem. If you are unsure what to do, go with
 
       {
         "require": {
-          "wisembly/totem": "~1.4"
+          "wisembly/totem": "^1.4"
         }
       }
     ```
@@ -93,8 +93,6 @@ var_dump($set->hasChanged('foo'),
 
 Running Tests
 =============
-```console
-$ php composer.phar install --dev
-$ bin/phpunit
-```
+1. Install phpunit if not already installed
+2. Run phpunit on the project
 
