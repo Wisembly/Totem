@@ -41,18 +41,15 @@ class ObjectSnapshot extends AbstractSnapshot
 
         $this->raw = $object;
         $this->oid = spl_object_hash($object);
-        $refl      = new ReflectionObject($object);
 
-        if (method_exists('\\ReflectionObject', 'isCloneable') && $refl->isCloneable()) {
-            $this->raw = clone $object;
-        }
+        $export = (array) $object;
+        $class = get_class($object);
 
-        /** @var \ReflectionProperty $reflProperty */
-        foreach ($refl->getProperties() as $reflProperty) {
-            $reflProperty->setAccessible(true);
-            $value = $reflProperty->getValue($object);
+        foreach ($export as $property => $value) {
+            $property = str_replace("\x00*\x00", '', $property); // protected property
+            $property = str_replace("\x00{$class}\x00", '', $property); // private property
 
-            $this->data[$reflProperty->getName()] = $value;
+            $this->data[$property] = $value;
         }
 
         parent::normalize();
