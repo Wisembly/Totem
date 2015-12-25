@@ -11,8 +11,8 @@
 
 namespace Totem\Snapshot;
 
-use stdClass,
-    ReflectionMethod;
+use stdClass;
+use ReflectionMethod;
 
 use PHPUnit_Framework_TestCase;
 

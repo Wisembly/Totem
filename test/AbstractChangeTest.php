@@ -11,7 +11,7 @@
 
 namespace Totem;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit_Framework_TestCase;
 
 class AbstractChangeTest extends PHPUnit_Framework_TestCase
 {

@@ -11,13 +11,13 @@
 
 namespace Totem;
 
-use \stdClass;
+use stdClass;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit_Framework_TestCase;
 
-use Totem\Snapshot\ArraySnapshot,
-    Totem\Snapshot\ObjectSnapshot,
-    Totem\Snapshot\CollectionSnapshot;
+use Totem\Snapshot\ArraySnapshot;
+use Totem\Snapshot\ObjectSnapshot;
+use Totem\Snapshot\CollectionSnapshot;
 
 class SetTest extends \PHPUnit_Framework_TestCase
 {

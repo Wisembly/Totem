@@ -11,11 +11,11 @@
 
 namespace Totem;
 
-use ArrayAccess,
-    ReflectionClass,
+use ArrayAccess;
+use ReflectionClass;
 
-    BadMethodCallException,
-    InvalidArgumentException;
+use BadMethodCallException;
+use InvalidArgumentException;
 
 use Totem\Exception\IncomparableDataException;
 

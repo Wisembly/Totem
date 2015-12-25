@@ -11,7 +11,7 @@
 
 namespace Totem\Exception;
 
-use \InvalidArgumentException;
+use InvalidArgumentException;
 
 class IncomparableDataException extends InvalidArgumentException
 {

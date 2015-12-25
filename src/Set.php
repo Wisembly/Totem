@@ -11,23 +11,23 @@
 
 namespace Totem;
 
-use Countable,
-    ArrayAccess,
+use Countable;
+use ArrayAccess;
 
-    ArrayIterator,
-    IteratorAggregate,
+use ArrayIterator;
+use IteratorAggregate;
 
-    RuntimeException,
-    OutOfBoundsException,
-    BadMethodCallException;
+use RuntimeException;
+use OutOfBoundsException;
+use BadMethodCallException;
 
-use Totem\Change\Removal,
-    Totem\Change\Addition,
-    Totem\Change\Modification,
+use Totem\Change\Removal;
+use Totem\Change\Addition;
+use Totem\Change\Modification;
 
-    Totem\SetInterface,
-    Totem\AbstractSnapshot,
-    Totem\Snapshot\CollectionSnapshot;
+use Totem\SetInterface;
+use Totem\AbstractSnapshot;
+use Totem\Snapshot\CollectionSnapshot;
 
 /**
  * Represents a changeset

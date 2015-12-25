@@ -11,12 +11,12 @@
 
 namespace Totem\Snapshot;
 
-use Traversable,
-    ReflectionClass,
-    InvalidArgumentException;
+use Traversable;
+use ReflectionClass;
+use InvalidArgumentException;
 
-use Symfony\Component\PropertyAccess\PropertyPath,
-    Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Totem\AbstractSnapshot;
 

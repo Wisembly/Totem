@@ -11,9 +11,8 @@
 
 namespace Totem\Snapshot;
 
-use \ReflectionObject,
-
-    \InvalidArgumentException;
+use ReflectionObject;
+use InvalidArgumentException;
 
 use Totem\AbstractSnapshot;
 

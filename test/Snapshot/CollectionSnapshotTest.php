@@ -11,8 +11,8 @@
 
 namespace Totem\Snapshot;
 
-use ArrayObject,
-    ReflectionProperty;
+use ArrayObject;
+use ReflectionProperty;
 
 use PHPUnit_Framework_TestCase;
 

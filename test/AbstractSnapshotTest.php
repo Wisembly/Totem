@@ -11,8 +11,8 @@
 
 namespace Totem;
 
-use ReflectionMethod,
-    ReflectionProperty;
+use ReflectionMethod;
+use ReflectionProperty;
 
 use PHPUnit_Framework_TestCase;
 
