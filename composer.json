@@ -19,10 +19,6 @@
         "source": "https://github.com/Wisembly/Totem"
     },
 
-	"replace": {
-		"taluu/totem": "self.version"
-	},
-
     "autoload": {
         "psr-4": {
             "Totem\\": ["src/", "test/"]
@@ -30,19 +26,7 @@
     },
 
     "require": {
-        "php": ">=5.4",
-        "symfony/property-access": "~2.5"
-    },
-
-    "require-dev": {
-        "phpunit/phpunit": "~4.0",
-        "satooshi/php-coveralls": "~0.6"
-    },
-
-    "config": {
-        "bin-dir": "bin"
-    },
-
-    "minimum-stability": "dev",
-    "prefer-stable": true
+        "php": "^5.4|^7.0",
+        "symfony/property-access": "^2.5|^3.0"
+    }
 }
