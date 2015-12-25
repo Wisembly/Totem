@@ -11,12 +11,14 @@ matrix:
       - php: hhvm
 
 install:
-    - composer install --prefer-source --no-dev -o
+    - composer install --prefer-source --no-dev --no-interaction -o
 
 script:
     - phpunit --coverage-text --coverage-clover clover.xml
 
 after_script:
+    - chmod +rwx clover.xml
     - wget https://github.com/satooshi/php-coveralls/releases/download/v0.7.1/coveralls.phar
+    - chmod +x coveralls.phar
     - php coveralls.phar
 
