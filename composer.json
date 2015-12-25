@@ -21,7 +21,13 @@
 
     "autoload": {
         "psr-4": {
-            "Totem\\": ["src/", "test/"]
+            "Totem\\": ["src/"]
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "Totem\\": ["test/"]
         }
     },
 
