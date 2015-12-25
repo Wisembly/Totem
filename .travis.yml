@@ -10,13 +10,13 @@ matrix:
   allow_failures:
       - php: hhvm
 
-before_script:
-    - composer self-update
-    - composer install --prefer-source -o
+install:
+    - composer install --prefer-source --no-dev -o
 
 script:
-    - bin/phpunit --coverage-text --coverage-clover clover.xml
+    - phpunit --coverage-text --coverage-clover clover.xml
 
 after_script:
-    - bin/coveralls
+    - wget https://github.com/satooshi/php-coveralls/releases/download/v0.7.1/coveralls.phar
+    - php coveralls.phar
 
