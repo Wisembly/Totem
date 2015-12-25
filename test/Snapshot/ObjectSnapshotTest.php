@@ -48,23 +48,6 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
         new ObjectSnapshot([]);
     }
 
-    /**
-     * @dataProvider deepProvider
-     */
-    public function testDeepConstructor($value)
-    {
-        new ObjectSnapshot((object) ['foo' => $value]);
-    }
-
-    public function deepProvider()
-    {
-        return [
-            'with a sub-object' => [(object) ['bar' => 'baz']],
-            'with a sub-array' => [['bar' => 'baz']],
-            'with a scalar' => ['fubar']
-        ];
-    }
-
     public function testExportAllProperties()
     {
         $snapshot = new ObjectSnapshot(new Foo('foo', 'bar', 'baz'));
@@ -79,6 +62,22 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
         $this->assertSame('foo', $data['foo']);
         $this->assertSame('bar', $data['bar']);
         $this->assertSame('baz', $data['baz']);
+    }
+
+    public function testDeepConstructor()
+    {
+        $object = new Foo(
+            (object) ['foo' => 'bar'], // object
+            ['baz' => 'fubar'], // array
+            'fubaz' // scalar
+        );
+
+        $snapshot = new ObjectSnapshot($object);
+        $data = $snapshot->getComparableData();
+
+        $this->assertInstanceOf('Totem\\Snapshot\\ObjectSnapshot', $data['foo']);
+        $this->assertInstanceOf('Totem\\Snapshot\\ArraySnapshot', $data['bar']);
+        $this->assertNotInstanceOf('Totem\\AbstractSnapshot', $data['baz']);
     }
 }
 
