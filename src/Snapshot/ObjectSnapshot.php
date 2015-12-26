@@ -46,8 +46,7 @@ class ObjectSnapshot extends AbstractSnapshot
         $class = get_class($object);
 
         foreach ($export as $property => $value) {
-            $property = str_replace("\x00*\x00", '', $property); // protected property
-            $property = str_replace("\x00{$class}\x00", '', $property); // private property
+            $property = str_replace(["\x00*\x00", "\x00{$class}\x00"], '', $property); // not accessible properties
 
             $this->data[$property] = $value;
         }
