@@ -178,41 +178,25 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
             return new Removal($this->getRawData($old[$key]));
         }
 
-        $values = ['old' => $this->getRawData($old[$key]),
-                   'new' => $this->getRawData($new[$key])];
+        $raw = [
+            'old' => $this->getRawData($old[$key]),
+            'new' => $this->getRawData($new[$key])
+        ];
 
-        switch (true) {
-            // type verification
-            case gettype($old[$key]) !== gettype($new[$key]):
-                return new Modification($values['old'], $values['new']);
+        if ($old[$key] instanceof AbstractSnapshot && $new[$key] instanceof AbstractSnapshot && $new[$key]->isComparable($old[$key])) {
+            $set = new static;
+            $set->compute($old[$key], $new[$key]);
 
-            // could we compare two snapshots ?
-            case $old[$key] instanceof AbstractSnapshot:
-                if (!$new[$key] instanceof AbstractSnapshot) {
-                    return new Modification($values['old'], $values['new']);
-                }
-
-                if (!$old[$key]->isComparable($new[$key])) {
-                    return new Modification($values['old'], $values['new']);
-                }
-
-                $set = new static;
-                $set->compute($old[$key], $new[$key]);
-
-                if (0 < count($set)) {
-                    return $set;
-                }
-
-                return null;
-
-            // unknown type : compare raw data
-            case $values['old'] !== $values['new']:
-                return new Modification($values['old'], $values['new']);
-        // PHPUnit coverage wtf start
-        // @codeCoverageIgnoreStart
+            if (0 < count($set)) {
+                return $set;
+            }
         }
-        // @codeCoverageIgnoreEnd
-        // PHPUnit coverage wtf end
+
+        if ($raw['old'] !== $raw['new']) {
+            return new Modification($raw['old'], $raw['new']);
+        }
+
+        return null;
     }
 
     /**
