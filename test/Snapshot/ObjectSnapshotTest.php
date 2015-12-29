@@ -48,19 +48,52 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
         new ObjectSnapshot([]);
     }
 
-    /**
-     * @dataProvider deepProvider
-     */
-    public function testDeepConstructor($value)
+    public function testExportAllProperties()
     {
-        new ObjectSnapshot((object) ['foo' => $value]);
+        $snapshot = new ObjectSnapshot(new Foo('foo', 'bar', 'baz'));
+        $data = $snapshot->getComparableData();
+
+        $this->assertCount(3, $data);
+
+        $this->assertArrayHasKey('foo', $data);
+        $this->assertArrayHasKey('bar', $data);
+        $this->assertArrayHasKey('baz', $data);
+
+        $this->assertSame('foo', $data['foo']);
+        $this->assertSame('bar', $data['bar']);
+        $this->assertSame('baz', $data['baz']);
     }
 
-    public function deepProvider()
+    public function testDeepConstructor()
     {
-        return [[(object) ['bar' => 'baz']],
-                [['bar' => 'baz']],
-                ['fubar']];
+        $object = new Foo(
+            (object) ['foo' => 'bar'], // object
+            ['baz' => 'fubar'], // array
+            'fubaz' // scalar
+        );
+
+        $snapshot = new ObjectSnapshot($object);
+        $data = $snapshot->getComparableData();
+
+        $this->assertInstanceOf('Totem\\Snapshot\\ObjectSnapshot', $data['foo']);
+        $this->assertInstanceOf('Totem\\Snapshot\\ArraySnapshot', $data['bar']);
+        $this->assertNotInstanceOf('Totem\\AbstractSnapshot', $data['baz']);
     }
 }
+
+// todo in php7 : use anon class !
+class Foo
+{
+    public $foo;
+    protected $bar;
+    private $baz;
+
+    public function __construct($foo, $bar, $baz)
+    {
+        $this->foo = $foo;
+        $this->bar = $bar;
+        $this->baz = $baz;
+    }
+}
+
 
