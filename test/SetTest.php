@@ -26,30 +26,66 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetChangesWithChangedStructure($old, $new, $class)
     {
-        $set = new Set;
-        $set->compute(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
+        $old = new class($old) extends AbstractSnapshot {
+            public function __construct($data) {
+                $this->data = $data;
+            }
+        };
+
+        $new = new class($new) extends AbstractSnapshot {
+            public function __construct($data) {
+                $this->data = $data;
+            }
+        };
+
+        $set = new Set($old, $new);
 
         $this->assertInstanceOf('Totem\\Change\\' . $class, $set->getChange('1'));
     }
 
     public function invalidEntryProvider()
     {
-        return [[['foo'], ['foo', 'bar'], 'Addition'],
-                [['foo', 'bar'], ['foo'], 'Removal']];
+        return [
+            'addition' => [
+                ['foo'],
+                ['foo', 'bar'],
+                'Addition'
+            ],
+
+            'removal' => [
+                ['foo', 'bar'],
+                ['foo'],
+                'Removal'
+            ]
+        ];
     }
 
     public function testHasChanged()
     {
-        $old = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubar']]);
-        $new = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubaz']]);
+        $old = new class('foo', 'bar') extends AbstractSnapshot {
+            public function __construct($foo, $bar) {
+                $this->data = [
+                    'foo' => $foo,
+                    'bar' => $bar
+                ];
+            }
+        };
 
-        $set = new Set;
-        $set->compute($old, $new);
+        $new = new class('foo', 'baz') extends AbstractSnapshot {
+            public function __construct($foo, $bar) {
+                $this->data = [
+                    'foo' => $foo,
+                    'bar' => $bar
+                ];
+            }
+        };
+
+        $set = new Set($old, $new);
 
         $this->assertFalse($set->hasChanged('foo'));
         $this->assertFalse(isset($set['foo']));
-        $this->assertTrue($set->hasChanged('baz'));
-        $this->assertTrue(isset($set['baz']));
+        $this->assertTrue($set->hasChanged('bar'));
+        $this->assertTrue(isset($set['bar']));
     }
 
     /**
@@ -57,11 +93,13 @@ class SetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetChangeWithInvalidProperty()
     {
-        $old = new Snapshot(['data' => ['foo' => 'bar']]);
+        $old = new class extends AbstractSnapshot {
+            public function __construct() {
+                $this->data = ['foo' => 'bar'];
+            }
+        };
 
-        $set = new Set;
-        $set->compute($old, $old);
-
+        $set = new Set($old, $old);
         $set->getChange('foo');
     }
 
@@ -92,8 +130,19 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $new['kludge'] = 42;
         $new['xyzzy']  = (object) [];
 
-        $set = new Set;
-        $set->compute(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
+        $old = new class($old) extends AbstractSnapshot {
+            public function __construct($old) {
+                $this->data = $old;
+            }
+        };
+
+        $new = new class($new) extends AbstractSnapshot {
+            public function __construct($new) {
+                $this->data = $new;
+            }
+        };
+
+        $set = new Set($old, $new);
 
         $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('fuqux'));
         $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('foo'));
@@ -107,9 +156,13 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     public function testIterator()
     {
-        $set = new Set;
-        $set->compute(new Snapshot(['data' => ['foo']]), new Snapshot(['data' => ['bar']]));
+        $snapshot = new class extends AbstractSnapshot {
+            public function __construct() {
+                $this->data = ['foo' => 'bar'];
+            }
+        };
 
+        $set = new Set($snapshot, $snapshot);
         $this->assertInstanceOf('ArrayIterator', $set->getIterator());
     }
 
@@ -119,9 +172,6 @@ class SetTest extends \PHPUnit_Framework_TestCase
     public function testForbidenSetter()
     {
         $set = new Set;
-        $old = new Snapshot;
-        $set->compute($old, $old);
-
         $set[] = 'baz';
     }
 
@@ -131,9 +181,6 @@ class SetTest extends \PHPUnit_Framework_TestCase
     public function testForbidenUnsetter()
     {
         $set = new Set;
-        $old = new Snapshot;
-        $set->compute($old, $old);
-
         unset($set[0]);
     }
 
@@ -169,17 +216,10 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     public function testAlreadyComputedSetShouldNotRecompute()
     {
-        $old = new Snapshot(['data' => ['foo']]);
-        $new = new Snapshot(['data' => ['bar']]);
+        $snapshot = new class extends AbstractSnapshot {};
 
-        $set = new Set($old, $new); // implicitly compute the set in the constructor
-
-        $this->assertCount(1, $set);
-        $this->assertTrue($set->hasChanged(0));
-        $this->assertEquals('foo', $set->getChange(0)->getOld());
-        $this->assertEquals('bar', $set->getChange(0)->getNew());
-
-        $set->compute($old, $new);
+        $set = new Set($snapshot, $snapshot);
+        $set->compute($snapshot, $snapshot); // force recomputation
     }
 
     public function testComputeCollections()
@@ -199,8 +239,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
     /** @dataProvider unaffectedSnapshotComputerProvider */
     public function testUnaffectedCollections(AbstractSnapshot $origin, AbstractSnapshot $upstream)
     {
-        $set = new Set;
-        $set->compute($origin, $upstream);
+        $set = new Set($origin, $upstream);
 
         $this->assertNotContainsOnly('integer',array_keys(iterator_to_array($set)));
     }

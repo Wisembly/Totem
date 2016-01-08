@@ -16,15 +16,36 @@ use ReflectionProperty;
 
 use PHPUnit_Framework_TestCase;
 
+use Totem\Snapshot\ArraySnapshot;
+use Totem\Snapshot\ObjectSnapshot;
+
 class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
 {
+    private $snapshot;
+
+    public function setUp()
+    {
+        $this->snapshot = new class extends AbstractSnapshot {
+            public function __construct()
+            {
+                $this->data = ['foo' => true];
+            }
+        };
+
+    }
+
     /**
      * @expectedException        Totem\Exception\IncomparableDataException
      * @expectedExceptionMessage This data is not comparable with the base
      */
     public function testDiffIncomparable()
     {
-        $snapshot = new Snapshot(['comparable' => false]);
+        $snapshot = new class extends AbstractSnapshot {
+            public function isComparable(AbstractSnapshot $snapshot) {
+                return false;
+            }
+        };
+
         $snapshot->diff($snapshot);
     }
 
@@ -34,7 +55,13 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testComparableDataFailure()
     {
-        $snapshot = new Snapshot(['data' => 'foo']);
+        $snapshot = new class extends AbstractSnapshot {
+            public function __construct()
+            {
+                $this->data = 'foo';
+            }
+        };
+
         $snapshot->getComparableData();
     }
 
@@ -43,14 +70,15 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testOffsetExists($key, $expect)
     {
-        $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
-        $this->assertSame($expect, isset($snapshot[$key]));
+        $this->assertSame($expect, isset($this->snapshot[$key]));
     }
 
     public function existsProvider()
     {
-        return [['foo', true],
-                ['bar', false]];
+        return [
+            'offset exists' => ['foo', true],
+            'offset does not exists' => ['bar', false]
+        ];
     }
 
     /**
@@ -59,8 +87,7 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testOffsetUnset()
     {
-        $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
-        unset($snapshot['foo']);
+        unset($this->snapshot['foo']);
     }
 
     /**
@@ -69,8 +96,7 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testOffsetSet()
     {
-        $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
-        $snapshot[] = 'foo';
+        $this->snapshot[] = 'foo';
     }
 
     /**
@@ -79,53 +105,70 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidDataNormalizer()
     {
-        $snapshot = new Snapshot(['data' => 'foo']);
+        $snapshot = new class extends AbstractSnapshot {
+            protected $data = 'foo';
+        };
 
-        $refl = new ReflectionMethod('Totem\\AbstractSnapshot', 'normalize');
+        $refl = new ReflectionMethod(AbstractSnapshot::class, 'normalize');
         $refl->setAccessible(true);
         $refl->invoke($snapshot);
     }
 
     /** @dataProvider normalizerProvider */
-    public function testNormalizer($data, $snapshotClass, $setClass = null)
+    public function testNormalizer($data, $snapshotClass, $setClass)
     {
-        $snapshot = new Snapshot;
-        $setClass = $setClass ?: 'stdClass';
+        $snapshot = new class($data) extends AbstractSnapshot {
+            public function __construct($data)
+            {
+                $this->data = [$data];
+            }
 
-        $dataProperty = new ReflectionProperty('Totem\\AbstractSnapshot', 'data');
-        $dataProperty->setAccessible(true);
-        $dataProperty->setValue($snapshot, [$data]);
+            public function getData()
+            {
+                return $this->data;
+            }
 
-        $setClassProperty = new ReflectionProperty('Totem\\AbstractSnapshot', 'setClass');
-        $setClassProperty->setAccessible(true);
-        $setClassProperty->setValue($snapshot, $setClass);
+            public function isComparable(AbstractSnapshot $snapshot)
+            {
+                $refl = new \ReflectionObject($snapshot);
 
-        $method = new ReflectionMethod('Totem\\AbstractSnapshot', 'normalize');
+                return $refl->isAnonymous() || parent::isComparable($snapshot);
+            }
+        };
+
+        $method = new ReflectionMethod(AbstractSnapshot::class, 'normalize');
         $method->setAccessible(true);
         $method->invoke($snapshot);
 
-        $this->assertInstanceOf($snapshotClass, $dataProperty->getValue($snapshot)[0]);
-        $this->assertEquals($setClass, $setClassProperty->getValue($dataProperty->getValue($snapshot)[0]));
+        $snapshot = $snapshot->getData()[0];
+
+        $property = new ReflectionProperty(AbstractSnapshot::class, 'setClass');
+        $property->setAccessible(true);
+        $property->setValue($snapshot, $setClass);
+        $property = $property->getValue($snapshot);
+
+        $this->assertInstanceOf($snapshotClass, $snapshot);
+        $this->assertEquals($setClass, $property);
     }
 
     public function normalizerProvider()
     {
-        return [[new Snapshot, 'Totem\\Snapshot', 'Totem\\Set'],
-                [['foo' => 'bar'], 'Totem\\Snapshot\\ArraySnapshot'],
-                [(object) ['foo' => 'bar'], 'Totem\\Snapshot\\ObjectSnapshot']];
+        $snapshot = new class extends AbstractSnapshot {};
+
+        return [
+            'any snapshots' => [$snapshot, get_class($snapshot), Set::class],
+            'array snapshots' => [['foo' => 'bar'], ArraySnapshot::class, 'stdClass'],
+            'object snapshot' => [(object) ['foo' => 'bar'], ObjectSnapshot::class, 'stdClass']];
     }
 
     public function testDiff()
     {
-        $snapshot = new Snapshot(['data' => []]);
-
-        $this->assertInstanceOf('Totem\\Set', $snapshot->diff($snapshot));
+        $this->assertInstanceOf(Set::class, $this->snapshot->diff($this->snapshot));
     }
 
     public function testCorrectSetClass()
     {
-        $snapshot = new Snapshot(['data' => []]);
-        $snapshot->setSetClass('Totem\\Set');
+        $this->snapshot->setSetClass(Set::class);
     }
 
     /**
@@ -134,8 +177,7 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testWrongSetClass()
     {
-        $snapshot = new Snapshot(['data' => []]);
-        $snapshot->setSetClass('stdclass');
+        $this->snapshot->setSetClass('stdClass');
     }
 }
 

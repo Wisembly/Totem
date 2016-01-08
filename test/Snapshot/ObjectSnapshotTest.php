@@ -50,7 +50,13 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 
     public function testExportAllProperties()
     {
-        $snapshot = new ObjectSnapshot(new Foo('foo', 'bar', 'baz'));
+        $object = new class {
+            public $foo = 'foo';
+            protected $bar = 'bar';
+            private $baz = 'baz';
+        };
+
+        $snapshot = new ObjectSnapshot($object);
         $data = $snapshot->getComparableData();
 
         $this->assertCount(3, $data);
@@ -66,34 +72,27 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
 
     public function testDeepConstructor()
     {
-        $object = new Foo(
-            (object) ['foo' => 'bar'], // object
-            ['baz' => 'fubar'], // array
-            'fubaz' // scalar
-        );
+        $object = new class {
+            public $array;
+            public $object;
+            public $scalar = 'foo';
+
+            public function __construct()
+            {
+                $this->object = new class {
+                    public $foo = 'bar';
+                };
+
+                $this->array = ['foo' => 'bar'];
+            }
+        };
 
         $snapshot = new ObjectSnapshot($object);
         $data = $snapshot->getComparableData();
 
-        $this->assertInstanceOf('Totem\\Snapshot\\ObjectSnapshot', $data['foo']);
-        $this->assertInstanceOf('Totem\\Snapshot\\ArraySnapshot', $data['bar']);
-        $this->assertNotInstanceOf('Totem\\AbstractSnapshot', $data['baz']);
+        $this->assertInstanceOf('Totem\\Snapshot\\ObjectSnapshot', $data['object']);
+        $this->assertInstanceOf('Totem\\Snapshot\\ArraySnapshot', $data['array']);
+        $this->assertNotInstanceOf('Totem\\AbstractSnapshot', $data['scalar']);
     }
 }
-
-// todo in php7 : use anon class !
-class Foo
-{
-    public $foo;
-    protected $bar;
-    private $baz;
-
-    public function __construct($foo, $bar, $baz)
-    {
-        $this->foo = $foo;
-        $this->bar = $bar;
-        $this->baz = $baz;
-    }
-}
-
 

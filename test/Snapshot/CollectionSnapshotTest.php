@@ -16,6 +16,8 @@ use ReflectionProperty;
 
 use PHPUnit_Framework_TestCase;
 
+use Totem\AbstractSnapshot;
+
 class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -24,7 +26,9 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testSnapshotNotArray()
     {
-        new CollectionSnapshot('foo', 'bar', ['snapshotClass' => 'Totem\\Snapshot']);
+        $snapshot = new class extends AbstractSnapshot {};
+
+        new CollectionSnapshot('foo', 'bar', ['snapshotClass' => get_class($snapshot)]);
     }
 
     /**
@@ -49,7 +53,7 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
 
     public function snapshotClassWrongReflectionProvider()
     {
-        return [['Totem\\AbstractSnapshot'],
+        return [[AbstractSnapshot::class],
                 ['stdClass']];
     }
 
@@ -75,16 +79,18 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
     public function testAllValid($hasSnapshot)
     {
         $options = [];
-        $class   = 'Totem\\Snapshot\\ArraySnapshot';
+        $class = ArraySnapshot::class;
 
         if (true === $hasSnapshot) {
-            $class                    = 'Totem\\Snapshot';
-            $options['snapshotClass'] = 'Totem\\Snapshot';
+            $snapshot = new class extends AbstractSnapshot {};
+
+            $class = get_class($snapshot);
+            $options['snapshotClass'] = get_class($snapshot);
         }
 
         $snapshot = new CollectionSnapshot([['foo' => 'bar', 'baz' => 'fubar']], '[foo]', $options);
 
-        $refl = new ReflectionProperty('Totem\\AbstractSnapshot', 'data');
+        $refl = new ReflectionProperty(AbstractSnapshot::class, 'data');
         $refl->setAccessible(true);
 
         $this->assertArrayHasKey('bar', $refl->getValue($snapshot));
