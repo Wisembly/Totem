@@ -18,7 +18,7 @@ use Totem\ChangeInterface;
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Removal implements ChangeInterface
+final class Removal implements ChangeInterface
 {
     /** @var mixed */
     private $old;

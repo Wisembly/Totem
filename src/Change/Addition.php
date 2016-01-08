@@ -18,7 +18,7 @@ use Totem\ChangeInterface;
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Addition implements ChangeInterface
+final class Addition implements ChangeInterface
 {
     /** @var mixed */
     private $new;
