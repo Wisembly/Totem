@@ -65,7 +65,7 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
      *
      * @throws RuntimeException If the changeset was not computed yet
      */
-    public function hasChanged($property)
+    public function hasChanged($property): bool
     {
         if (null === $this->changes) {
             throw new RuntimeException('The changeset was not computed yet !');
@@ -134,7 +134,14 @@ class Set implements SetInterface, ArrayAccess, Countable, IteratorAggregate
         return new ArrayIterator($this->changes);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Calculate the changeset between two snapshots
+     *
+     * The two snapshots must be of the same snapshot type
+     *
+     * @param AbstractSnapshot $old Old snapshot
+     * @param AbstractSnapshot $new New snapshot
+     */
     public function compute(AbstractSnapshot $old, AbstractSnapshot $new)
     {
         if (null !== $this->changes) {

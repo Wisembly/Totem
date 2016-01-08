@@ -11,8 +11,6 @@
 
 namespace Totem;
 
-use Totem\AbstractSnapshot;
-
 /**
  * Represents a set of changes between two data
  *
@@ -25,10 +23,7 @@ interface SetInterface
      *
      * @param string $property
      *
-     * @return AbstractChange Set if it is a recursive change,
-     *                        Addition if something was added,
-     *                        Removal if something it was deleted, or
-     *                        Modification otherwise
+     * @return ChangeInterface|SetInterface
      */
     public function getChange($property);
 
@@ -39,16 +34,6 @@ interface SetInterface
      *
      * @return boolean
      */
-    public function hasChanged($property);
-
-    /**
-     * Calculate the changeset between two snapshots
-     *
-     * The two snapshots must be of the same snapshot type
-     *
-     * @param AbstractSnapshot $old Old snapshot
-     * @param AbstractSnapshot $new New snapshot
-     */
-    public function compute(AbstractSnapshot $old, AbstractSnapshot $new);
+    public function hasChanged($property) : bool;
 }
 
