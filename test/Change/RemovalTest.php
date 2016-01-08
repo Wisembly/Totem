@@ -13,6 +13,7 @@ namespace Totem\Change;
 
 class RemovalTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var Removal */
     private $change;
 
     public function setUp()

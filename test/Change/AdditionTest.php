@@ -13,6 +13,7 @@ namespace Totem\Change;
 
 class AdditionTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var Addition */
     private $change;
 
     public function setUp()

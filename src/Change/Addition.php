@@ -11,18 +11,31 @@
 
 namespace Totem\Change;
 
-use Totem\AbstractChange;
+use Totem\ChangeInterface;
 
 /**
  * Represents something that was added in the original data
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-class Addition extends AbstractChange
+class Addition implements ChangeInterface
 {
+    /** @var mixed */
+    private $new;
+
     public function __construct($new)
     {
-        parent::__construct(null, $new);
+        $this->new = $new;
+    }
+
+    public function getOld()
+    {
+        return null;
+    }
+
+    public function getNew()
+    {
+        return $this->new;
     }
 }
 
