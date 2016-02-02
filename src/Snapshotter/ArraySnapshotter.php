@@ -16,54 +16,29 @@ use InvalidArgumentException;
 use Totem\Snapshot;
 use Totem\Snapshotter;
 use Totem\UnsupportedDataException;
+use Totem\UnsupportedSnapshotException;
+
+use Totem\Snapshot\ArraySnapshot;
 
 final class ArraySnapshotter implements Snapshotter
 {
     /** {@inheritDoc} */
-    public function getSnapshot($data): Snapshot
+    public function getSnapshot($raw): Snapshot
     {
-        if (!$this->supports($data)) {
-            throw new UnsupportedDataException($this, $data);
+        if (!$this->supports($raw)) {
+            throw new UnsupportedDataException($this, $raw);
         }
 
-        return new class($data) implements Snapshot {
-            /** @var mixed[] snapshotted data */
-            private $data;
-
-            /** @var array raw array data */
-            private $raw;
-
-            public function __construct(array $data)
+        return new class($raw) extends Snapshot implements ArraySnapshot {
+            public function __construct(array $raw)
             {
-                $this->data = $data;
-                $this->raw = $data;
+                parent::__construct($raw, $raw);
             }
 
             /** {@inheritDoc} */
             public function isComparable(Snapshot $snapshot): bool
             {
                 return is_array($snapshot->getRaw());
-            }
-
-            /** {@inheritDoc} */
-            public function getRaw()
-            {
-                return $this->raw;
-            }
-
-            /** {@inheritDoc} */
-            public function getData(): array
-            {
-                return $this->data;
-            }
-
-            /** {@inheritDoc} */
-            public function setData(array $data): Snapshot
-            {
-                $snapshot = clone $this;
-                $snapshot->data = $data;
-
-                return $snapshot;
             }
         };
     }
@@ -72,6 +47,21 @@ final class ArraySnapshotter implements Snapshotter
     public function supports($data): bool
     {
         return is_array($data);
+    }
+
+    /** {@inheritDoc} */
+    public function setData(Snapshot $snapshot, array $data)
+    {
+        if (!$snapshot instanceof ArraySnapshot) {
+            throw new UnsupportedSnapshotException($this, $snapshot);
+        }
+
+        // from http://ocramius.github.io/blog/accessing-private-php-class-members-without-reflection/
+        $callback = function () use ($data) {
+            $this->data = $data;
+        };
+
+        $callback->call($snapshot);
     }
 }
 

@@ -16,18 +16,27 @@ interface Snapshotter
     /**
      * Builds and return a normalized snapshot
      *
-     * @param mixed $data Data to snapshot
+     * @param mixed $raw Data to snapshot
      *
      * @return Snapshot
      * @throws UnsupportedDataException Data not supported by this snapshotter
      */
-    public function getSnapshot($data): Snapshot;
+    public function getSnapshot($raw): Snapshot;
 
     /**
      * Check if this snapshot supports the given $data
      *
      * @return bool
      */
-    public function supports($data): bool;
+    public function supports($raw): bool;
+
+    /**
+     * Set the data of a compatible snapshot
+     *
+     * @param array $data Data to override
+     * @return void
+     * @throws UnsupportedSnapshotException
+     */
+    public function setData(Snapshot $snapshot, array $data);
 }
 

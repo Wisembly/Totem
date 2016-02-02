@@ -39,25 +39,20 @@ class ArraySnapshotterTest extends PHPUnit_Framework_TestCase
     {
         $snapshotter = new ArraySnapshotter;
 
-        $prophecy = $this->prophesize(Snapshot::class);
-        $prophecy->getRaw()->willReturn('foo')->shouldBeCalled();
-
-        $new = $prophecy->reveal();
+        $new = new Snapshot('foo', []);
         $old = $snapshotter->getSnapshot([]);
 
         $this->assertFalse($old->isComparable($new));
     }
 
-    public function testImmutable()
+    public function testDataChangerChangesData()
     {
         $snapshotter = new ArraySnapshotter;
         $snapshot = $snapshotter->getSnapshot([]);
 
-        $copy = $snapshot->setData(['foo' => 'bar']);
+        $snapshotter->setData($snapshot, ['foo' => 'bar']);
 
-        $this->assertNotSame($snapshot, $copy);
-        $this->assertArrayNotHasKey('foo', $snapshot->getData());
-        $this->assertArrayHasKey('foo', $copy->getData());
+        $this->assertArrayHasKey('foo', $snapshot->getData());
     }
 
     /** @expectedException Totem\UnsupportedDataException */

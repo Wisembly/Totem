@@ -16,77 +16,52 @@ use InvalidArgumentException;
 use Totem\Snapshot;
 use Totem\Snapshotter;
 use Totem\UnsupportedDataException;
+use Totem\UnsupportedSnapshotException;
+
+use Totem\Snapshot\ObjectSnapshot;
 
 final class ObjectSnapshotter implements Snapshotter
 {
     /** {@inheritDoc} */
-    public function getSnapshot($data): Snapshot
+    public function getSnapshot($raw): Snapshot
     {
-        if (!$this->supports($data)) {
-            throw new UnsupportedDataException($this, $data);
+        if (!$this->supports($raw)) {
+            throw new UnsupportedDataException($this, $raw);
         }
 
-        return new class($data) implements Snapshot {
-            /** @var mixed[] snapshotted data */
-            private $data;
+        $data = [];
+        $export = (array) $raw;
+        $class = get_class($raw);
 
-            /** @var object raw object data */
-            private $raw;
+        foreach ($export as $property => $value) {
+            $property = str_replace(["\x00*\x00", "\x00{$class}\x00"], '', $property); // not accessible properties
+            $data[$property] = $value;
+        }
 
+        return new class($raw, $data) extends Snapshot implements ObjectSnapshot {
             /** @var string object spl hash */
             private $oid;
 
-            public function __construct($data)
+            public function __construct($raw, array $data)
             {
-                if (!is_object($data)) {
-                    throw new InvalidArgumentException(sprintf('Expected an object, got %s', gettype($data)));
+                if (!is_object($raw)) {
+                    throw new InvalidArgumentException(sprintf('Expected an object, got %s', gettype($raw)));
                 }
 
-                $this->data = [];
-                $this->raw = $data;
-                $this->oid = spl_object_hash($data);
+                parent::__construct($raw, $data);
+                $this->oid = spl_object_hash($raw);
+            }
 
-                $export = (array) $data;
-                $class = get_class($data);
-
-                foreach ($export as $property => $value) {
-                    $property = str_replace(["\x00*\x00", "\x00{$class}\x00"], '', $property); // not accessible properties
-
-                    $this->data[$property] = $value;
-                }
+            /** {@inheritDoc} */
+            public function getObjectId()
+            {
+                return $this->oid;
             }
 
             /** {@inheritDoc} */
             public function isComparable(Snapshot $snapshot): bool
             {
-                $data = $snapshot->getRaw();
-
-                if (!is_object($data)) {
-                    return false;
-                }
-
-                return spl_object_hash($data) === $this->oid;
-            }
-
-            /** {@inheritDoc} */
-            public function getRaw()
-            {
-                return $this->raw;
-            }
-
-            /** {@inheritDoc} */
-            public function getData(): array
-            {
-                return $this->data;
-            }
-
-            /** {@inheritDoc} */
-            public function setData(array $data): Snapshot
-            {
-                $snapshot = clone $this;
-                $snapshot->data = $data;
-
-                return $snapshot;
+                return $snapshot instanceof ObjectSnapshot && $snapshot->getObjectId() === $this->oid;
             }
         };
     }
@@ -95,6 +70,21 @@ final class ObjectSnapshotter implements Snapshotter
     public function supports($data): bool
     {
         return is_object($data);
+    }
+
+    /** {@inheritDoc} */
+    public function setData(Snapshot $snapshot, array $data)
+    {
+        if (!$snapshot instanceof ObjectSnapshot) {
+            throw new UnsupportedSnapshotException($this, $snapshot);
+        }
+
+        // from http://ocramius.github.io/blog/accessing-private-php-class-members-without-reflection/
+        $callback = function () use ($data) {
+            $this->data = $data;
+        };
+
+        $callback->call($snapshot);
     }
 }
 

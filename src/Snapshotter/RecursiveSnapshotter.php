@@ -14,6 +14,7 @@ namespace Totem\Snapshotter;
 use Totem\Snapshot;
 use Totem\Snapshotter;
 use Totem\UnsupportedDataException;
+use Totem\UnsupportedSnapshotException;
 
 final class RecursiveSnapshotter implements Snapshotter
 {
@@ -52,9 +53,10 @@ final class RecursiveSnapshotter implements Snapshotter
             }
         }
 
-         // can't do anything else than requiring a setData in the generated
-         // snapshot :{
-        $snapshot = $snapshot->setData($data);
+        try {
+            $this->setData($snapshot, $data);
+        } catch (UnsupportedSnapshotException $e) {
+        }
 
         return $snapshot;
     }
@@ -62,6 +64,22 @@ final class RecursiveSnapshotter implements Snapshotter
     public function addSnapshotter(Snapshotter $snapshotter, $priority = 0)
     {
         $this->snapshotters->insert($snapshotter, $priority);
+    }
+
+    /** {@inheritDoc} */
+    public function setData(Snapshot $snapshot, array $data)
+    {
+        $snapshotters = clone $this->snapshotters;
+
+        foreach ($snapshotters as $snapshotter) {
+            try {
+                $snapshotter->setData($snapshot, $data);
+                return;
+            } catch (UnsupportedSnapshotException $e) {
+            }
+        }
+
+        throw new UnsupportedSnapshotException($this, $snapshot);
     }
 
     private function getSnapshotter($data): Snapshotter

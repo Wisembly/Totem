@@ -52,25 +52,20 @@ class ObjectSnapshotterTest extends PHPUnit_Framework_TestCase
     {
         $snapshotter = new ObjectSnapshotter;
 
-        $prophecy = $this->prophesize(Snapshot::class);
-        $prophecy->getRaw()->willReturn('foo')->shouldBeCalled();
-
-        $new = $prophecy->reveal();
+        $new = new Snapshot('foo', []);
         $old = $snapshotter->getSnapshot(new class {});
 
         $this->assertFalse($old->isComparable($new));
     }
 
-    public function testImmutable()
+    public function testDataChangerChangesData()
     {
         $snapshotter = new ObjectSnapshotter;
         $snapshot = $snapshotter->getSnapshot(new class {});
 
-        $copy = $snapshot->setData(['foo' => 'bar']);
+        $snapshotter->setData($snapshot, ['foo' => 'bar']);
 
-        $this->assertNotSame($snapshot, $copy);
-        $this->assertArrayNotHasKey('foo', $snapshot->getData());
-        $this->assertArrayHasKey('foo', $copy->getData());
+        $this->assertArrayHasKey('foo', $snapshot->getData());
     }
 
     /** @expectedException Totem\UnsupportedDataException */
@@ -89,7 +84,7 @@ class ObjectSnapshotterTest extends PHPUnit_Framework_TestCase
         $snapshotter = new ObjectSnapshotter;
         $snapshot = $snapshotter->getSnapshot(new class {});
 
-        $snapshot->__construct('foo');
+        $snapshot->__construct('foo', []);
     }
 
     public function testExportAllProperties()
