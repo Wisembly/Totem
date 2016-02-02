@@ -11,37 +11,48 @@
 
 namespace Totem;
 
-interface Snapshot
+class Snapshot
 {
+    /** @var mixed[] Snapshotted data */
+    protected $data;
+
+    /** @var mixed Raw data */
+    private $raw;
+
+    public function __construct($raw, array $data)
+    {
+        $this->raw = $raw;
+        $this->data = $data;
+    }
+
     /**
      * Checks if another snapshot is comparable to this one
      *
      * @return bool
      */
-    public function isComparable(Snapshot $snapshot): bool;
+    public function isComparable(Snapshot $snapshot): bool
+    {
+        return true;
+    }
 
     /**
      * Get the raw data associated with the snapshot
      *
      * @return mixed
      */
-    public function getRaw();
+    final public function getRaw()
+    {
+        return $this->raw;
+    }
 
     /**
      * Get the snapshotted data
      *
      * @return mixed[]
      */
-    public function getData(): array;
-
-    /**
-     * Data setter
-     *
-     * This is needed in order to be able to normalize the data inside the
-     * snapshotted data (Adding more snapshots on its properties)
-     *
-     * @return Snapshot
-     */
-    public function setData(array $data): Snapshot;
+    final public function getData(): array
+    {
+        return $this->data;
+    }
 }
 
