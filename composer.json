@@ -33,7 +33,9 @@
 
     "require": {
         "php": "^7.0",
-        "symfony/property-access": "^3.0"
+
+        "symfony/property-access": "^3.0",
+        "php-ds/php-ds": "^1.0"
     },
 
     "extra": {

@@ -11,6 +11,8 @@
 
 namespace Totem\Snapshotter;
 
+use Ds\PriorityQueue;
+
 use Totem\Snapshot;
 use Totem\Snapshotter;
 use Totem\UnsupportedDataException;
@@ -18,12 +20,12 @@ use Totem\UnsupportedSnapshotException;
 
 final class RecursiveSnapshotter implements Snapshotter
 {
-    /** @var \SplPriorityQueue<Snapshotter> */
+    /** @var PriorityQueue<Snapshotter> */
     private $snapshotters;
 
     public function __construct()
     {
-        $this->snapshotters = new \SplPriorityQueue;
+        $this->snapshotters = new PriorityQueue;
     }
 
     /** {@inheritDoc} */
@@ -63,15 +65,14 @@ final class RecursiveSnapshotter implements Snapshotter
 
     public function addSnapshotter(Snapshotter $snapshotter, $priority = 0)
     {
-        $this->snapshotters->insert($snapshotter, $priority);
+        $this->snapshotters->push($snapshotter, $priority);
     }
 
     /** {@inheritDoc} */
     public function setData(Snapshot $snapshot, array $data)
     {
-        $snapshotters = clone $this->snapshotters;
-
-        foreach ($snapshotters as $snapshotter) {
+        // gotta copy the queue because it is destructive
+        foreach ($this->snapshotters->copy() as $snapshotter) {
             try {
                 $snapshotter->setData($snapshot, $data);
                 return;
@@ -84,9 +85,8 @@ final class RecursiveSnapshotter implements Snapshotter
 
     private function getSnapshotter($data): Snapshotter
     {
-        $snapshotters = clone $this->snapshotters;
-
-        foreach ($snapshotters as $snapshotter) {
+        // gotta copy the queue because it is destructive
+        foreach ($this->snapshotters->copy() as $snapshotter) {
             if ($snapshotter->supports($data)) {
                 return $snapshotter;
             }
