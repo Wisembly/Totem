@@ -29,18 +29,7 @@ final class ArraySnapshotter implements Snapshotter
             throw new UnsupportedDataException($this, $raw);
         }
 
-        return new class($raw) extends Snapshot implements ArraySnapshot {
-            public function __construct(array $raw)
-            {
-                parent::__construct($raw, $raw);
-            }
-
-            /** {@inheritDoc} */
-            public function isComparable(Snapshot $snapshot): bool
-            {
-                return is_array($snapshot->getRaw());
-            }
-        };
+        return new ArraySnapshot($raw);
     }
 
     /** {@inheritDoc} */

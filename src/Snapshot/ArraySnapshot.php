@@ -11,6 +11,8 @@
 
 namespace Totem\Snapshot;
 
+use Totem\Snapshot;
+
 /**
  * Just a blank interface, so that generated snapshots by the ArraySnapshotter
  * are marked and identifiable
@@ -18,7 +20,17 @@ namespace Totem\Snapshot;
  * @internal
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-interface ArraySnapshot
+final class ArraySnapshot extends Snapshot
 {
+    public function __construct(array $raw)
+    {
+        parent::__construct($raw, $raw);
+    }
+
+    /** {@inheritDoc} */
+    public function isComparable(Snapshot $snapshot): bool
+    {
+        return $snapshot instanceof ArraySnapshot;
+    }
 }
 

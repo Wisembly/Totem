@@ -11,20 +11,40 @@
 
 namespace Totem\Snapshot;
 
+use InvalidArgumentException;
+use Totem\Snapshot;
+
 /**
- * Just a blank interface, so that generated snapshots by the ObjectSnapshotter
- * are marked and identifiable
+ * Object snapshot
  *
  * @internal
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-interface ObjectSnapshot
+final class ObjectSnapshot extends Snapshot
 {
-    /**
-     * Returns the object hash of the snapshotted object
-     *
-     * @return string
-     */
-    public function getObjectId();
+    /** @var string object spl hash */
+    private $oid;
+
+    public function __construct($raw, array $data)
+    {
+        if (!is_object($raw)) {
+            throw new InvalidArgumentException(sprintf('Expected an object, got %s', gettype($raw)));
+        }
+
+        parent::__construct($raw, $data);
+        $this->oid = spl_object_hash($raw);
+    }
+
+    /** @return string object hash */
+    public function getObjectId()
+    {
+        return $this->oid;
+    }
+
+    /** {@inheritDoc} */
+    public function isComparable(Snapshot $snapshot): bool
+    {
+        return $snapshot instanceof ObjectSnapshot && $snapshot->getObjectId() === $this->oid;
+    }
 }
 

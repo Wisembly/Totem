@@ -11,8 +11,6 @@
 
 namespace Totem\Snapshotter;
 
-use InvalidArgumentException;
-
 use Totem\Snapshot;
 use Totem\Snapshotter;
 use Totem\UnsupportedDataException;
@@ -38,32 +36,7 @@ final class ObjectSnapshotter implements Snapshotter
             $data[$property] = $value;
         }
 
-        return new class($raw, $data) extends Snapshot implements ObjectSnapshot {
-            /** @var string object spl hash */
-            private $oid;
-
-            public function __construct($raw, array $data)
-            {
-                if (!is_object($raw)) {
-                    throw new InvalidArgumentException(sprintf('Expected an object, got %s', gettype($raw)));
-                }
-
-                parent::__construct($raw, $data);
-                $this->oid = spl_object_hash($raw);
-            }
-
-            /** {@inheritDoc} */
-            public function getObjectId()
-            {
-                return $this->oid;
-            }
-
-            /** {@inheritDoc} */
-            public function isComparable(Snapshot $snapshot): bool
-            {
-                return $snapshot instanceof ObjectSnapshot && $snapshot->getObjectId() === $this->oid;
-            }
-        };
+        return new ObjectSnapshot($raw, $data);
     }
 
     /** {@inheritDoc} */
