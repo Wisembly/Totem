@@ -42,22 +42,10 @@ final class RecursiveSnapshotter implements Snapshotter
     /** {@inheritDoc} */
     public function getSnapshot($data): Snapshot
     {
-        $snapshot = $data instanceof Snapshot
-            ? $data
-            : $this->getSnapshotter($data)->getSnapshot($data);
+        $snapshot = $this->getSnapshotter($data)->getSnapshot($data);
 
-        $data = $snapshot->getData();
-
-        foreach ($data as &$value) {
-            try {
-                $value = $this->getSnapshot($value);
-            } catch (UnsupportedDataException $e) {
-            }
-        }
-
-        try {
-            $this->setData($snapshot, $data);
-        } catch (UnsupportedSnapshotException $e) {
+        if ($snapshot instanceof Snapshot\MutableSnapshot && $snapshot->isMutable()) {
+            $snapshot = $snapshot->mutate($this);
         }
 
         return $snapshot;
@@ -66,21 +54,6 @@ final class RecursiveSnapshotter implements Snapshotter
     public function addSnapshotter(Snapshotter $snapshotter, $priority = 0)
     {
         $this->snapshotters->push($snapshotter, $priority);
-    }
-
-    /** {@inheritDoc} */
-    public function setData(Snapshot $snapshot, array $data)
-    {
-        // gotta copy the queue because it is destructive
-        foreach ($this->snapshotters->copy() as $snapshotter) {
-            try {
-                $snapshotter->setData($snapshot, $data);
-                return;
-            } catch (UnsupportedSnapshotException $e) {
-            }
-        }
-
-        throw new UnsupportedSnapshotException($this, $snapshot);
     }
 
     private function getSnapshotter($data): Snapshotter

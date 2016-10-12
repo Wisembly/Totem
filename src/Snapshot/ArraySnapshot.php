@@ -12,15 +12,15 @@
 namespace Totem\Snapshot;
 
 use Totem\Snapshot;
+use Totem\Snapshotter\RecursiveSnapshotter;
 
 /**
- * Just a blank interface, so that generated snapshots by the ArraySnapshotter
- * are marked and identifiable
+ * Array snapshots
  *
  * @internal
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-final class ArraySnapshot extends Snapshot
+final class ArraySnapshot extends Snapshot implements MutableSnapshot
 {
     public function __construct(array $raw)
     {
@@ -31,6 +31,27 @@ final class ArraySnapshot extends Snapshot
     public function isComparable(Snapshot $snapshot): bool
     {
         return $snapshot instanceof ArraySnapshot;
+    }
+
+    /** {@inheritDoc} */
+    public function isMutable(): bool
+    {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public function mutate(RecursiveSnapshotter $recursiveSnapshotter): Snapshot
+    {
+        $clone = clone $this;
+
+        foreach ($clone->data as &$data) {
+            try {
+                $data = $recursiveSnapshotter->getSnapshot($data);
+            } catch (UnsupportedDataException $e) {
+            }
+        }
+
+        return $clone;
     }
 }
 

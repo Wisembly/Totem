@@ -33,13 +33,16 @@ class RecursiveSnapshotterTest extends PHPUnit_Framework_TestCase
     {
         $snapshotter = new RecursiveSnapshotter;
 
-        $snapshot = new Snapshot('foo', ['foo' => 'bar']);
+        $snapshot = $this->prophesize(Snapshot::class);
+        $snapshot->willImplement(Snapshot\MutableSnapshot::class);
+        $snapshot->willBeConstructedWith(['foo', ['foo' => 'bar']]);
+        $snapshot->isMutable()->willReturn(true);
+        $snapshot->mutate($snapshotter)->willReturn($snapshot);
+        $snapshot = $snapshot->reveal();
 
         $sub = $this->prophesize(SnapshotterInterface::class);
         $sub->supports([])->willReturn(true)->shouldBeCalled();
-        $sub->supports('bar')->willReturn(false)->shouldBeCalled();
         $sub->getSnapshot([])->willReturn($snapshot)->shouldBeCalled();
-        $sub->setData($snapshot, ['foo' => 'bar'])->shouldBeCalled();
 
         $snapshotter->addSnapshotter($sub->reveal());
 

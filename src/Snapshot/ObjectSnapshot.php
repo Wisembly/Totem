@@ -13,6 +13,7 @@ namespace Totem\Snapshot;
 
 use InvalidArgumentException;
 use Totem\Snapshot;
+use Totem\Snapshotter\RecursiveSnapshotter;
 
 /**
  * Object snapshot
@@ -20,7 +21,7 @@ use Totem\Snapshot;
  * @internal
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-final class ObjectSnapshot extends Snapshot
+final class ObjectSnapshot extends Snapshot implements MutableSnapshot
 {
     /** @var string object spl hash */
     private $oid;
@@ -45,6 +46,27 @@ final class ObjectSnapshot extends Snapshot
     public function isComparable(Snapshot $snapshot): bool
     {
         return $snapshot instanceof ObjectSnapshot && $snapshot->getObjectId() === $this->oid;
+    }
+
+    /** {@inheritDoc} */
+    public function isMutable(): bool
+    {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public function mutate(RecursiveSnapshotter $recursiveSnapshotter): Snapshot
+    {
+        $clone = clone $this;
+
+        foreach ($clone->data as &$data) {
+            try {
+                $data = $recursiveSnapshotter->getSnapshot($data);
+            } catch (UnsupportedDataException $e) {
+            }
+        }
+
+        return $clone;
     }
 }
 

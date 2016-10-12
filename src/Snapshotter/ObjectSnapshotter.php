@@ -44,20 +44,5 @@ final class ObjectSnapshotter implements Snapshotter
     {
         return is_object($data);
     }
-
-    /** {@inheritDoc} */
-    public function setData(Snapshot $snapshot, array $data)
-    {
-        if (!$snapshot instanceof ObjectSnapshot) {
-            throw new UnsupportedSnapshotException($this, $snapshot);
-        }
-
-        // from http://ocramius.github.io/blog/accessing-private-php-class-members-without-reflection/
-        $callback = function () use ($data) {
-            $this->data = $data;
-        };
-
-        $callback->call($snapshot);
-    }
 }
 

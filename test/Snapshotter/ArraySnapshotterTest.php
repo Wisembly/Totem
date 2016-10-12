@@ -45,16 +45,6 @@ class ArraySnapshotterTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($old->isComparable($new));
     }
 
-    public function testDataChangerChangesData()
-    {
-        $snapshotter = new ArraySnapshotter;
-        $snapshot = $snapshotter->getSnapshot([]);
-
-        $snapshotter->setData($snapshot, ['foo' => 'bar']);
-
-        $this->assertArrayHasKey('foo', $snapshot->getData());
-    }
-
     /** @expectedException Totem\UnsupportedDataException */
     public function testGeneratedSnapshotsFailsOnNonArrays()
     {

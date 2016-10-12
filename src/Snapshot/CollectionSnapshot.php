@@ -11,7 +11,10 @@
 
 namespace Totem\Snapshot;
 
+use InvalidArgumentException;
+
 use Totem\Snapshot;
+use Totem\Snapshotter\RecursiveSnapshotter;
 
 /**
  * Represents a snapshot of a collection
@@ -21,7 +24,7 @@ use Totem\Snapshot;
  * @internal
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-final class CollectionSnapshot extends Snapshot
+final class CollectionSnapshot extends Snapshot implements MutableSnapshot
 {
     /**
      * Data mapper between the primary key and the real integer key of
@@ -62,6 +65,31 @@ final class CollectionSnapshot extends Snapshot
         }
 
         return $this->link[$primary];
+    }
+
+    /** {@inheritDoc} */
+    public function isMutable(): bool
+    {
+        $data = $this->data;
+        $data = array_shift($data);
+
+        return $data instanceof MutableSnapshot && $data->isMutable();
+    }
+
+    /** {@inheritDoc} */
+    public function mutate(RecursiveSnapshotter $recursiveSnapshotter): Snapshot
+    {
+        if (!$this->isMutable()) {
+            throw new ImmutableException($this);
+        }
+
+        $clone = clone $this;
+
+        foreach ($clone->data as &$snapshot) {
+            $snapshot = $snapshot->mutate($recursiveSnapshotter);
+        }
+
+        return $clone;
     }
 }
 

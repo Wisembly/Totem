@@ -29,14 +29,5 @@ interface Snapshotter
      * @return bool
      */
     public function supports($raw): bool;
-
-    /**
-     * Set the data of a compatible snapshot
-     *
-     * @param array $data Data to override
-     * @return void
-     * @throws UnsupportedSnapshotException
-     */
-    public function setData(Snapshot $snapshot, array $data);
 }
 

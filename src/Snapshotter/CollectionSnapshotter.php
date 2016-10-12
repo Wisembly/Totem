@@ -86,17 +86,5 @@ final class CollectionSnapshotter implements Snapshotter
 
         return new CollectionSnapshot($raw, $data, $link);
     }
-
-    /**
-     * {@inheritDoc}
-     *
-     * No one messes with my data. NO ONE.
-     *
-     * @throws UnsupportedSnapshotException always thrown
-     */
-    public function setData(Snapshot $snapshot, array $data)
-    {
-        throw new UnsupportedSnapshotException($this, $snapshot);
-    }
 }
 

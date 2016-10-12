@@ -58,16 +58,6 @@ class ObjectSnapshotterTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($old->isComparable($new));
     }
 
-    public function testDataChangerChangesData()
-    {
-        $snapshotter = new ObjectSnapshotter;
-        $snapshot = $snapshotter->getSnapshot(new class {});
-
-        $snapshotter->setData($snapshot, ['foo' => 'bar']);
-
-        $this->assertArrayHasKey('foo', $snapshot->getData());
-    }
-
     /** @expectedException Totem\UnsupportedDataException */
     public function testGeneratedSnapshotsFailsOnNonObjects()
     {
