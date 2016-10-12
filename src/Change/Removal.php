@@ -11,31 +11,24 @@
 
 namespace Totem\Change;
 
-use Totem\ChangeInterface;
+use BadMethodCallException;
+use Totem\Change;
 
 /**
  * Represents something that was removed from the original data
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-final class Removal implements ChangeInterface
+final class Removal extends Change
 {
-    /** @var mixed */
-    private $old;
-
     public function __construct($old)
     {
-        $this->old = $old;
+        parent::__construct($old, null);
     }
 
     public function getNew()
     {
-        return null;
-    }
-
-    public function getOld()
-    {
-        return $this->old;
+        throw new BadMethodCallException('A removal does not have a new state');
     }
 }
 

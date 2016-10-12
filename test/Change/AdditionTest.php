@@ -13,22 +13,14 @@ namespace Totem\Change;
 
 class AdditionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Addition */
-    private $change;
-
-    public function setUp()
+    /**
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage An addition does not have an old state
+     */
+    public function testOldTriggersException()
     {
-        $this->change = new Addition('new');
-    }
-
-    public function testOld()
-    {
-        $this->assertNull($this->change->getOld());
-    }
-
-    public function testNew()
-    {
-        $this->assertSame('new', $this->change->getNew());
+        $change = new Addition('new');
+        $change->getOld();
     }
 }
 

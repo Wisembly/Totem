@@ -11,31 +11,24 @@
 
 namespace Totem\Change;
 
-use Totem\ChangeInterface;
+use BadMethodCallException;
+use Totem\Change;
 
 /**
  * Represents something that was added in the original data
  *
  * @author Baptiste Clavié <clavie.b@gmail.com>
  */
-final class Addition implements ChangeInterface
+final class Addition extends Change
 {
-    /** @var mixed */
-    private $new;
-
     public function __construct($new)
     {
-        $this->new = $new;
+        parent::__construct(null, $new);
     }
 
     public function getOld()
     {
-        return null;
-    }
-
-    public function getNew()
-    {
-        return $this->new;
+        throw new BadMethodCallException('An addition does not have an old state');
     }
 }
 

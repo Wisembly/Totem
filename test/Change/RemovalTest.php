@@ -13,22 +13,14 @@ namespace Totem\Change;
 
 class RemovalTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Removal */
-    private $change;
-
-    public function setUp()
+    /**
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage A removal does not have a new state
+     */
+    public function testNewCallShouldTriggerAnException()
     {
-        $this->change = new Removal('old');
-    }
-
-    public function testOld()
-    {
-        $this->assertSame('old', $this->change->getOld());
-    }
-
-    public function testNew()
-    {
-        $this->assertNull($this->change->getNew());
+        $change = new Removal('old');
+        $change->getNew();
     }
 }
 

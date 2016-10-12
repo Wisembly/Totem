@@ -17,7 +17,7 @@ namespace Totem;
  * @author Baptiste Clavié <clavie.b@gmail.com>
  * @author Rémy Gazelot <rgazelot@gmail.com>
  */
-abstract class AbstractChange implements ChangeInterface
+class Change
 {
     /** old state */
     private $old;
