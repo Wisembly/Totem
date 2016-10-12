@@ -34,7 +34,14 @@ final class CollectionSnapshot extends Snapshot implements MutableSnapshot
      */
     private $link;
 
-    public function __construct($raw, array $data, array $link)
+    /**
+     * Indicates if the data are mutable
+     *
+     * @var bool
+     */
+    private $mutable;
+
+    public function __construct($raw, array $data, array $link, bool $mutable = false)
     {
         if (!is_array($raw) && !$raw instanceof Traversable) {
             throw new InvalidArgumentException(sprintf('Expected a traversable, got %s', gettype($raw)));
@@ -43,6 +50,7 @@ final class CollectionSnapshot extends Snapshot implements MutableSnapshot
         parent::__construct($raw, $data);
 
         $this->link = $link;
+        $this->mutable = $mutable;
     }
 
     /** {@inheritDoc} */
@@ -70,10 +78,7 @@ final class CollectionSnapshot extends Snapshot implements MutableSnapshot
     /** {@inheritDoc} */
     public function isMutable(): bool
     {
-        $data = $this->data;
-        $data = array_shift($data);
-
-        return $data instanceof MutableSnapshot && $data->isMutable();
+        return $this->mutable;
     }
 
     /** {@inheritDoc} */

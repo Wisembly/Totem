@@ -80,11 +80,11 @@ final class CollectionSnapshotter implements Snapshotter
         foreach ($raw as $key => $value) {
             $primary = $this->accessor->getValue($value, $this->primary);
 
-            $data[$primary] = $this->snapshotter->getSnapshot($value);
+            $data[$primary] = $snapshot = $this->snapshotter->getSnapshot($value);
             $link[$primary] = $key;
         }
 
-        return new CollectionSnapshot($raw, $data, $link);
+        return new CollectionSnapshot($raw, $data, $link, $snapshot instanceof Snapshot\MutableSnapshot && $snapshot->isMutable());
     }
 }
 
