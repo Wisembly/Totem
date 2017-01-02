@@ -14,7 +14,6 @@
     ],
 
     "support": {
-        "email": "clavie.b@gmail.com",
         "issues": "https://github.com/Wisembly/Totem/issues",
         "source": "https://github.com/Wisembly/Totem"
     },
@@ -32,7 +31,7 @@
     },
 
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
 
         "symfony/property-access": "^3.0",
         "php-ds/php-ds": "^1.0"

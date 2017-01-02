@@ -37,7 +37,7 @@ final class ObjectSnapshot extends Snapshot implements MutableSnapshot
     }
 
     /** @return string object hash */
-    public function getObjectId()
+    public function getObjectId(): string
     {
         return $this->oid;
     }

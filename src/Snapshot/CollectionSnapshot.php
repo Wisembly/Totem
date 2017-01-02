@@ -41,12 +41,8 @@ final class CollectionSnapshot extends Snapshot implements MutableSnapshot
      */
     private $mutable;
 
-    public function __construct($raw, array $data, array $link, bool $mutable = false)
+    public function __construct(iterable $raw, array $data, array $link, bool $mutable = false)
     {
-        if (!is_array($raw) && !$raw instanceof Traversable) {
-            throw new InvalidArgumentException(sprintf('Expected a traversable, got %s', gettype($raw)));
-        }
-
         parent::__construct($raw, $data);
 
         $this->link = $link;
