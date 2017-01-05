@@ -62,7 +62,7 @@ final class CollectionSnapshot extends Snapshot implements MutableSnapshot
      *
      * @throws InvalidArgumentException primary key not found
      */
-    public function getOriginalKey(string $primary): int
+    public function getOriginalKey($primary)
     {
         if (!isset($this->link[$primary])) {
             throw new InvalidArgumentException(sprintf('The primary key "%s" is not in the computed dataset', $primary));

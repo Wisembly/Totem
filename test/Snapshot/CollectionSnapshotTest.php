@@ -53,5 +53,30 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(CollectionSnapshot::class, $snapshot);
     }
+
+    public function testItIsComparableToOtherCollectionSnapshots()
+    {
+        $snapshot = new CollectionSnapshot([], [], [], false);
+        $reference = new CollectionSnapshot([], [], [], false);
+
+        $notCollection = new Snapshot(null, []);
+
+        $this->assertTrue($snapshot->isComparable($reference));
+        $this->assertFalse($snapshot->isComparable($notCollection));
+    }
+
+    /** @expectedException InvalidArgumentException */
+    public function testItThrowsAnExceptionOnInvalidKey()
+    {
+        $snapshot = new CollectionSnapshot([], [], [], false);
+        $snapshot->getOriginalKey('foo');
+    }
+
+    public function testItReturnsOriginalKey()
+    {
+        $snapshot = new CollectionSnapshot([], [], ['foo' => 1], false);
+
+        $this->assertSame(1, $snapshot->getOriginalKey('foo'));
+    }
 }
 
