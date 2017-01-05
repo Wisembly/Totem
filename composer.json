@@ -32,9 +32,11 @@
 
     "require": {
         "php": "^7.1",
-
-        "symfony/property-access": "^3.0",
         "php-ds/php-ds": "^1.0"
+    },
+
+    "suggest": {
+        "symfony/property-access": "Allows to use the collection snapshotter"
     },
 
     "extra": {
