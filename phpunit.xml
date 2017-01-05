@@ -20,8 +20,12 @@
     </testsuites>
 
     <filter>
-        <whitelist>
+        <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./src</directory>
+
+            <exclude>
+                <directory suffix="Exception.php">./src</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
