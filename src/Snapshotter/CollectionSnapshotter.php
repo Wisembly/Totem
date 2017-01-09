@@ -22,6 +22,7 @@ use Totem\Snapshot;
 use Totem\Snapshotter;
 use Totem\UnsupportedDataException;
 use Totem\UnsupportedSnapshotException;
+use Totem\UnavailableSnapshotterException;
 
 use Totem\Snapshot\CollectionSnapshot;
 
@@ -38,6 +39,10 @@ final class CollectionSnapshotter implements Snapshotter
 
     public function __construct(Snapshotter $snapshotter, $primary)
     {
+        if (!class_exists(PropertyPath::class)) {
+            throw new UnavailableSnapshotterException($this, 'you need to install symfony/property-path ^3.0');
+        }
+
         $this->snapshotter = $snapshotter;
         $this->primary = new PropertyPath($primary);
 
