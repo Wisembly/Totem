@@ -39,19 +39,13 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
         $snapshot = $this->prophesize(Snapshot::class);
         $snapshot->willImplement(MutableSnapshot::class);
         $snapshot->willBeConstructedWith(['foo', ['bar' => 'baz']]);
-        $snapshot->mutate($recursive)->willReturn($snapshot)->shouldBeCalled();
+        $snapshot->mutate($recursive)->willReturn(new Snapshot('foo', ['foo' => 'bar']))->shouldBeCalled();
 
-        $snapshotter = $this->prophesize(Snapshotter::class);
-        $snapshotter->supports(Argument::cetera())->willReturn(true);
-        $snapshotter->getSnapshot(Argument::cetera())->willReturn($snapshot);
-        $snapshotter = $snapshotter->reveal();
+        $collectionSnapshot = new CollectionSnapshot(['foo'], [$snapshot->reveal()], [], true);
+        $mutatedSnapshot = $collectionSnapshot->mutate($recursive);
 
-        $recursive->addSnapshotter($snapshotter);
-
-        $snapshot = new CollectionSnapshot(['foo'], [$snapshot->reveal()], [], true);
-        $snapshot = $snapshot->mutate($recursive);
-
-        $this->assertInstanceOf(CollectionSnapshot::class, $snapshot);
+        $this->assertInstanceOf(CollectionSnapshot::class, $mutatedSnapshot);
+        $this->assertNotSame($mutatedSnapshot, $collectionSnapshot);
     }
 
     public function testItIsComparableToOtherCollectionSnapshots()

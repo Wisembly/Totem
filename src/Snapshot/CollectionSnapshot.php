@@ -93,4 +93,3 @@ final class CollectionSnapshot extends Snapshot implements MutableSnapshot
         return $clone;
     }
 }
-
