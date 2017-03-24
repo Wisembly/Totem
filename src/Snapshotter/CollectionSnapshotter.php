@@ -55,7 +55,7 @@ final class CollectionSnapshotter implements Snapshotter
     /** {@inheritDoc} */
     public function supports($raw): bool
     {
-        if (!is_array($raw) && !$raw instanceof Traversable) {
+        if (!is_iterable($raw)) {
             return false;
         }
 
