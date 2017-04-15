@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/taluu/totem.png?label=ready)](https://waffle.io/taluu/totem)
 Totem
 =====
 [![License](https://poser.pugx.org/wisembly/totem/license.png)](https://packagist.org/packages/wisembly/totem)
