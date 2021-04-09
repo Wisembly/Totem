@@ -11,29 +11,27 @@
 
 namespace Totem;
 
+use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
+use Totem\Exception\IncomparableDataException;
 
-use PHPUnit_Framework_TestCase;
-
-class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
+class AbstractSnapshotTest extends TestCase
 {
-    /**
-     * @expectedException        Totem\Exception\IncomparableDataException
-     * @expectedExceptionMessage This data is not comparable with the base
-     */
     public function testDiffIncomparable()
     {
+        $this->expectException(IncomparableDataException::class);
+        $this->getExpectedExceptionMessage('This data is not comparable with the base');
+
         $snapshot = new Snapshot(['comparable' => false]);
         $snapshot->diff($snapshot);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The computed data is not an array, "string" given
-     */
     public function testComparableDataFailure()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->getExpectedExceptionMessage('The computed data is not an array, "string" given');
+
         $snapshot = new Snapshot(['data' => 'foo']);
         $snapshot->getComparableData();
     }
@@ -53,32 +51,29 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
                 ['bar', false]];
     }
 
-    /**
-     * @expectedException        BadMethodCallException
-     * @expectedExceptionMessage A snapshot is frozen by nature
-     */
     public function testOffsetUnset()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->getExpectedExceptionMessage('A snapshot is frozen by nature');
+
         $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
         unset($snapshot['foo']);
     }
 
-    /**
-     * @expectedException        BadMethodCallException
-     * @expectedExceptionMessage A snapshot is frozen by nature
-     */
     public function testOffsetSet()
     {
+        $this->expectException(\BadMethodCallException::class);
+        $this->getExpectedExceptionMessage('A snapshot is frozen by nature');
+
         $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
         $snapshot[] = 'foo';
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The computed data is not an array, "string" given
-     */
     public function testInvalidDataNormalizer()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->getExpectedExceptionMessage('The computed data is not an array, "string" given');
+
         $snapshot = new Snapshot(['data' => 'foo']);
 
         $refl = new ReflectionMethod('Totem\\AbstractSnapshot', 'normalize');
@@ -126,14 +121,15 @@ class AbstractSnapshotTest extends PHPUnit_Framework_TestCase
     {
         $snapshot = new Snapshot(['data' => []]);
         $snapshot->setSetClass('Totem\\Set');
+
+        self::assertInstanceOf(Snapshot::class, $snapshot);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage A Set Class should be instantiable and implement Totem\SetInterface
-     */
     public function testWrongSetClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->getExpectedExceptionMessage('A Set Class should be instantiable and implement Totem\SetInterface');
+
         $snapshot = new Snapshot(['data' => []]);
         $snapshot->setSetClass('stdclass');
     }

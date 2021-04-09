@@ -10,4 +10,6 @@ coveralls-upload.json
 vendor
 composer.lock
 bin
+.phpunit.result.cache
+.idea
 

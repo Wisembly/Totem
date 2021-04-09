@@ -11,14 +11,14 @@
 
 namespace Totem;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
-class AbstractChangeTest extends PHPUnit_Framework_TestCase
+class AbstractChangeTest extends TestCase
 {
     /** @var Totem\AbstractChange */
     private $mock;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->mock = $this->getMockForAbstractClass('Totem\\AbstractChange', ['old', 'new']);
     }

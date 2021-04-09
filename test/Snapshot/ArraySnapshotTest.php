@@ -11,12 +11,11 @@
 
 namespace Totem\Snapshot;
 
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use ReflectionMethod;
 
-use PHPUnit_Framework_TestCase;
-
-class ArraySnapshotTest extends PHPUnit_Framework_TestCase
+class ArraySnapshotTest extends TestCase
 {
     /**
      * @dataProvider providerCompare
@@ -42,7 +41,9 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testDeepConstructor($value)
     {
-        new ArraySnapshot(['foo' => $value]);
+        $arraySnapshot = new ArraySnapshot(['foo' => $value]);
+
+        self::assertSame(['foo' => $value], $arraySnapshot->getRawData());
     }
 
     public function deepProvider()

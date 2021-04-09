@@ -11,11 +11,13 @@
 
 namespace Totem\Change;
 
-class RemovalTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class RemovalTest extends TestCase
 {
     private $change;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->change = new Removal('old');
     }

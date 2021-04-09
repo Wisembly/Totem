@@ -11,12 +11,13 @@
 
 namespace Totem\Snapshot;
 
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use ReflectionMethod;
 
 use PHPUnit_Framework_TestCase;
 
-class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
+class ObjectSnapshotTest extends TestCase
 {
     /**
      * @dataProvider providerCompare
@@ -40,11 +41,10 @@ class ObjectSnapshotTest extends PHPUnit_Framework_TestCase
                 [$object, $snapshot, false]];
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testConstructWithoutObject()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         new ObjectSnapshot([]);
     }
 
