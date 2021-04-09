@@ -109,7 +109,7 @@ abstract class AbstractSnapshot implements ArrayAccess
      *
      * @codeCoverageIgnore
      */
-    final private function __clone()
+    private function __clone()
     {
     }
 
