@@ -12,17 +12,16 @@
 namespace Totem\Snapshot;
 
 use ArrayObject;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
-
-use PHPUnit_Framework_TestCase;
 
 class CollectionSnapshotTest extends TestCase
 {
     public function testSnapshotNotArray()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage(
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'An array or a Traversable was expected to take a snapshot of a collection, "string" given'
         );
 
@@ -31,8 +30,8 @@ class CollectionSnapshotTest extends TestCase
 
     public function testSnapshotClassNotLoadable()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage('The snapshot class "Totem\Fubar" does not seem to be loadable');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The snapshot class "Totem\Fubar" does not seem to be loadable');
 
         new CollectionSnapshot('foo', 'bar', ['snapshotClass' => 'Totem\\Fubar']);
     }
@@ -42,8 +41,8 @@ class CollectionSnapshotTest extends TestCase
      */
     public function testSnapshotWrongReflection($class)
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage(
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'A Snapshot Class should be instantiable and extends abstract class Totem\AbstractSnapshot'
         );
 
@@ -58,8 +57,8 @@ class CollectionSnapshotTest extends TestCase
 
     public function testNonCollection()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage(
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'The given array / Traversable is not a collection as it contains non numeric keys'
         );
 
@@ -68,8 +67,8 @@ class CollectionSnapshotTest extends TestCase
 
     public function testKeyNotReadable()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage(
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'The key "baz" is not defined or readable in one of the elements of the collection'
         );
 
@@ -104,8 +103,8 @@ class CollectionSnapshotTest extends TestCase
 
     public function testOriginalKeyNotFound()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage('The primary key "baz" is not in the computed dataset');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The primary key "baz" is not in the computed dataset');
 
         $snapshot = new CollectionSnapshot([['foo' => 'bar']], '[foo]');
         $snapshot->getOriginalKey('baz');

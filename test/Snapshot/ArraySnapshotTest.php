@@ -12,8 +12,6 @@
 namespace Totem\Snapshot;
 
 use PHPUnit\Framework\TestCase;
-use stdClass;
-use ReflectionMethod;
 
 class ArraySnapshotTest extends TestCase
 {

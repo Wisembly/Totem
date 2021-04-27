@@ -11,6 +11,8 @@
 
 namespace Totem;
 
+use BadMethodCallException;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionProperty;
@@ -21,7 +23,7 @@ class AbstractSnapshotTest extends TestCase
     public function testDiffIncomparable()
     {
         $this->expectException(IncomparableDataException::class);
-        $this->getExpectedExceptionMessage('This data is not comparable with the base');
+        $this->expectExceptionMessage('This data is not comparable with the base');
 
         $snapshot = new Snapshot(['comparable' => false]);
         $snapshot->diff($snapshot);
@@ -30,7 +32,7 @@ class AbstractSnapshotTest extends TestCase
     public function testComparableDataFailure()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage('The computed data is not an array, "string" given');
+        $this->expectExceptionMessage('The computed data is not an array, "string" given');
 
         $snapshot = new Snapshot(['data' => 'foo']);
         $snapshot->getComparableData();
@@ -53,8 +55,8 @@ class AbstractSnapshotTest extends TestCase
 
     public function testOffsetUnset()
     {
-        $this->expectException(\BadMethodCallException::class);
-        $this->getExpectedExceptionMessage('A snapshot is frozen by nature');
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('A snapshot is frozen by nature');
 
         $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
         unset($snapshot['foo']);
@@ -62,8 +64,8 @@ class AbstractSnapshotTest extends TestCase
 
     public function testOffsetSet()
     {
-        $this->expectException(\BadMethodCallException::class);
-        $this->getExpectedExceptionMessage('A snapshot is frozen by nature');
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('A snapshot is frozen by nature');
 
         $snapshot = new Snapshot(['data' => ['foo' => 'bar']]);
         $snapshot[] = 'foo';
@@ -71,8 +73,8 @@ class AbstractSnapshotTest extends TestCase
 
     public function testInvalidDataNormalizer()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage('The computed data is not an array, "string" given');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The computed data is not an array, "string" given');
 
         $snapshot = new Snapshot(['data' => 'foo']);
 
@@ -84,7 +86,7 @@ class AbstractSnapshotTest extends TestCase
     /** @dataProvider normalizerProvider */
     public function testNormalizer($data, $snapshotClass, $setClass = null)
     {
-        $snapshot = new Snapshot;
+        $snapshot = new Snapshot();
         $setClass = $setClass ?: 'stdClass';
 
         $dataProperty = new ReflectionProperty('Totem\\AbstractSnapshot', 'data');
@@ -105,7 +107,7 @@ class AbstractSnapshotTest extends TestCase
 
     public function normalizerProvider()
     {
-        return [[new Snapshot, 'Totem\\Snapshot', 'Totem\\Set'],
+        return [[new Snapshot(), 'Totem\\Snapshot', 'Totem\\Set'],
                 [['foo' => 'bar'], 'Totem\\Snapshot\\ArraySnapshot'],
                 [(object) ['foo' => 'bar'], 'Totem\\Snapshot\\ObjectSnapshot']];
     }
@@ -127,8 +129,8 @@ class AbstractSnapshotTest extends TestCase
 
     public function testWrongSetClass()
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage('A Set Class should be instantiable and implement Totem\SetInterface');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('A Set Class should be instantiable and implement Totem\SetInterface');
 
         $snapshot = new Snapshot(['data' => []]);
         $snapshot->setSetClass('stdclass');

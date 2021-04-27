@@ -104,15 +104,6 @@ abstract class AbstractSnapshot implements ArrayAccess
         return array_keys($this->getComparableData());
     }
 
-    /**
-     * Clone this object
-     *
-     * @codeCoverageIgnore
-     */
-    private function __clone()
-    {
-    }
-
     /** {@inheritDoc} */
     final public function offsetExists($offset)
     {

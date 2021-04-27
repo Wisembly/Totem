@@ -25,8 +25,6 @@ use Totem\Change\Removal;
 use Totem\Change\Addition;
 use Totem\Change\Modification;
 
-use Totem\SetInterface;
-use Totem\AbstractSnapshot;
 use Totem\Snapshot\CollectionSnapshot;
 
 /**

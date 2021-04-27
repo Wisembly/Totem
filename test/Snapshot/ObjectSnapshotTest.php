@@ -13,9 +13,6 @@ namespace Totem\Snapshot;
 
 use PHPUnit\Framework\TestCase;
 use stdClass;
-use ReflectionMethod;
-
-use PHPUnit_Framework_TestCase;
 
 class ObjectSnapshotTest extends TestCase
 {
@@ -30,7 +27,7 @@ class ObjectSnapshotTest extends TestCase
 
     public function providerCompare()
     {
-        $object = new stdClass;
+        $object = new stdClass();
 
         $snapshot = $this->getMockBuilder('Totem\\AbstractSnapshot')
                          ->disableOriginalConstructor()
@@ -95,5 +92,4 @@ class Foo
         $this->baz = $baz;
     }
 }
-
 
