@@ -39,9 +39,9 @@ class ArraySnapshotTest extends TestCase
      */
     public function testDeepConstructor($value)
     {
-        $arraySnapshot = new ArraySnapshot(['foo' => $value]);
+        $this->expectNotToPerformAssertions();
 
-        self::assertSame(['foo' => $value], $arraySnapshot->getRawData());
+        new ArraySnapshot(['foo' => $value]);
     }
 
     public function deepProvider()
