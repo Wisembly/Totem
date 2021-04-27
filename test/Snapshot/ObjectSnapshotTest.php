@@ -11,6 +11,7 @@
 
 namespace Totem\Snapshot;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -40,7 +41,7 @@ class ObjectSnapshotTest extends TestCase
 
     public function testConstructWithoutObject()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new ObjectSnapshot([]);
     }
