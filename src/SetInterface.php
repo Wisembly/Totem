@@ -11,8 +11,6 @@
 
 namespace Totem;
 
-use Totem\AbstractSnapshot;
-
 /**
  * Represents a set of changes between two data
  *

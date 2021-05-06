@@ -12,38 +12,40 @@
 namespace Totem\Snapshot;
 
 use ArrayObject;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-use PHPUnit_Framework_TestCase;
-
-class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
+class CollectionSnapshotTest extends TestCase
 {
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage An array or a Traversable was expected to take a snapshot of a collection, "string" given
-     */
     public function testSnapshotNotArray()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'An array or a Traversable was expected to take a snapshot of a collection, "string" given'
+        );
+
         new CollectionSnapshot('foo', 'bar', ['snapshotClass' => 'Totem\\Snapshot']);
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The snapshot class "Totem\Fubar" does not seem to be loadable
-     */
     public function testSnapshotClassNotLoadable()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The snapshot class "Totem\Fubar" does not seem to be loadable');
+
         new CollectionSnapshot('foo', 'bar', ['snapshotClass' => 'Totem\\Fubar']);
     }
 
     /**
      * @dataProvider snapshotClassWrongReflectionProvider
-     *
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage A Snapshot Class should be instantiable and extends abstract class Totem\AbstractSnapshot
      */
     public function testSnapshotWrongReflection($class)
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'A Snapshot Class should be instantiable and extends abstract class Totem\AbstractSnapshot'
+        );
+
         new CollectionSnapshot('foo', 'bar', ['snapshotClass' => $class]);
     }
 
@@ -53,21 +55,23 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
                 ['stdClass']];
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The given array / Traversable is not a collection as it contains non numeric keys
-     */
     public function testNonCollection()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The given array / Traversable is not a collection as it contains non numeric keys'
+        );
+
         new CollectionSnapshot(new ArrayObject(['foo' => 'bar']), 'bar');
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The key "baz" is not defined or readable in one of the elements of the collection
-     */
     public function testKeyNotReadable()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'The key "baz" is not defined or readable in one of the elements of the collection'
+        );
+
         new CollectionSnapshot([['foo' => 'bar']], 'baz');
     }
 
@@ -97,12 +101,11 @@ class CollectionSnapshotTest extends PHPUnit_Framework_TestCase
                 [false]];
     }
 
-    /**
-     * @expectedException        InvalidArgumentException
-     * @expectedExceptionMessage The primary key "baz" is not in the computed dataset
-     */
     public function testOriginalKeyNotFound()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The primary key "baz" is not in the computed dataset');
+
         $snapshot = new CollectionSnapshot([['foo' => 'bar']], '[foo]');
         $snapshot->getOriginalKey('baz');
     }

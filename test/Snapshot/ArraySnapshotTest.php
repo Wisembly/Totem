@@ -11,12 +11,9 @@
 
 namespace Totem\Snapshot;
 
-use stdClass;
-use ReflectionMethod;
+use PHPUnit\Framework\TestCase;
 
-use PHPUnit_Framework_TestCase;
-
-class ArraySnapshotTest extends PHPUnit_Framework_TestCase
+class ArraySnapshotTest extends TestCase
 {
     /**
      * @dataProvider providerCompare
@@ -42,6 +39,8 @@ class ArraySnapshotTest extends PHPUnit_Framework_TestCase
      */
     public function testDeepConstructor($value)
     {
+        $this->expectNotToPerformAssertions();
+
         new ArraySnapshot(['foo' => $value]);
     }
 

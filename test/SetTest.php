@@ -11,22 +11,23 @@
 
 namespace Totem;
 
+use BadMethodCallException;
+use OutOfBoundsException;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use stdClass;
-
-use PHPUnit_Framework_TestCase;
-
 use Totem\Snapshot\ArraySnapshot;
 use Totem\Snapshot\ObjectSnapshot;
 use Totem\Snapshot\CollectionSnapshot;
 
-class SetTest extends \PHPUnit_Framework_TestCase
+class SetTest extends TestCase
 {
     /**
      * @dataProvider invalidEntryProvider
      */
     public function testSetChangesWithChangedStructure($old, $new, $class)
     {
-        $set = new Set;
+        $set = new Set();
         $set->compute(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
         $this->assertInstanceOf('Totem\\Change\\' . $class, $set->getChange('1'));
@@ -43,7 +44,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $old = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubar']]);
         $new = new Snapshot(['data' => ['foo' => 'bar', 'baz' => 'fubaz']]);
 
-        $set = new Set;
+        $set = new Set();
         $set->compute($old, $new);
 
         $this->assertFalse($set->hasChanged('foo'));
@@ -52,14 +53,13 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(isset($set['baz']));
     }
 
-    /**
-     * @expectedException OutOfBoundsException
-     */
     public function testGetChangeWithInvalidProperty()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         $old = new Snapshot(['data' => ['foo' => 'bar']]);
 
-        $set = new Set;
+        $set = new Set();
         $set->compute($old, $old);
 
         $set->getChange('foo');
@@ -68,7 +68,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
     // @todo to break up
     public function testGetChange()
     {
-        $o = [new stdClass, (object) ['foo' => 'bar']];
+        $o = [new stdClass(), (object) ['foo' => 'bar']];
 
         $old = $new = ['foo'    => 'foo',
                        'bar'    => new ArraySnapshot(['foo', 'bar']),
@@ -92,7 +92,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $new['kludge'] = 42;
         $new['xyzzy']  = (object) [];
 
-        $set = new Set;
+        $set = new Set();
         $set->compute(new Snapshot(['data' => $old]), new Snapshot(['data' => $new]));
 
         $this->assertInstanceOf('Totem\\Change\\Modification', $set->getChange('fuqux'));
@@ -107,63 +107,58 @@ class SetTest extends \PHPUnit_Framework_TestCase
 
     public function testIterator()
     {
-        $set = new Set;
+        $set = new Set();
         $set->compute(new Snapshot(['data' => ['foo']]), new Snapshot(['data' => ['bar']]));
 
         $this->assertInstanceOf('ArrayIterator', $set->getIterator());
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     */
     public function testForbidenSetter()
     {
-        $set = new Set;
-        $old = new Snapshot;
+        $this->expectException(BadMethodCallException::class);
+
+        $set = new Set();
+        $old = new Snapshot();
         $set->compute($old, $old);
 
         $set[] = 'baz';
     }
 
-    /**
-     * @expectedException BadMethodCallException
-     */
     public function testForbidenUnsetter()
     {
-        $set = new Set;
-        $old = new Snapshot;
+        $this->expectException(BadMethodCallException::class);
+
+        $set = new Set();
+        $old = new Snapshot();
         $set->compute($old, $old);
 
         unset($set[0]);
     }
 
-    /**
-     * @expectedException         RuntimeException
-     * @expectedExceptionMessage  The changeset was not computed yet !
-     */
     public function testHasChangedNotComputedShouldThrowException()
     {
-        $set = new Set;
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The changeset was not computed yet !');
+
+        $set = new Set();
         $set->hasChanged('foo');
     }
 
-    /**
-     * @expectedException         RuntimeException
-     * @expectedExceptionMessage  The changeset was not computed yet !
-     */
     public function testNotComputedCountShouldThrowException()
     {
-        $set = new Set;
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The changeset was not computed yet !');
+
+        $set = new Set();
         count($set);
     }
 
-    /**
-     * @expectedException         RuntimeException
-     * @expectedExceptionMessage  The changeset was not computed yet !
-     */
     public function testNotComputedIteratorShouldThrowException()
     {
-        $set = new Set;
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The changeset was not computed yet !');
+
+        $set = new Set();
         $set->getIterator();
     }
 
@@ -190,7 +185,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
         $old = new CollectionSnapshot($old, '[foo]');
         $new = new CollectionSnapshot($new, '[foo]');
 
-        $set = new Set;
+        $set = new Set();
         $set->compute($old, $new);
 
         $this->assertContainsOnly('integer', array_keys(iterator_to_array($set)));
@@ -199,7 +194,7 @@ class SetTest extends \PHPUnit_Framework_TestCase
     /** @dataProvider unaffectedSnapshotComputerProvider */
     public function testUnaffectedCollections(AbstractSnapshot $origin, AbstractSnapshot $upstream)
     {
-        $set = new Set;
+        $set = new Set();
         $set->compute($origin, $upstream);
 
         $this->assertNotContainsOnly('integer',array_keys(iterator_to_array($set)));
